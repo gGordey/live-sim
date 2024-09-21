@@ -1,0 +1,193 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\seedtile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\seedtile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\root.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\root.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\tile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\tile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\vector2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\vector2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\savingtile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\savingtile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\roottile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\roottile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\leaftile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\leaftile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|c:\\users\\user\\source\\repos\\life simulation\\live-sim\\life simulation\\canvas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56D5C0CB-565F-4876-BE29-1D740EEC7457}|Life Simulation\\Life Simulation.csproj|solutionrelative:life simulation\\canvas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SeedTile.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\SeedTile.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\SeedTile.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\SeedTile.cs",
+              "RelativeToolTip": "Life Simulation\\SeedTile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:52.931Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Root.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Root.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\Root.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Root.cs",
+              "RelativeToolTip": "Life Simulation\\Root.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:51.217Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Game.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Game.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\Game.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Game.cs",
+              "RelativeToolTip": "Life Simulation\\Game.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:40.907Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Tile.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Tile.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\Tile.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Tile.cs",
+              "RelativeToolTip": "Life Simulation\\Tile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:55.765Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Vector2.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Vector2.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\Vector2.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Vector2.cs",
+              "RelativeToolTip": "Life Simulation\\Vector2.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:54.789Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SavingTile.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\SavingTile.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\SavingTile.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\SavingTile.cs",
+              "RelativeToolTip": "Life Simulation\\SavingTile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:52.197Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "RootTile.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\RootTile.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\RootTile.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\RootTile.cs",
+              "RelativeToolTip": "Life Simulation\\RootTile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:50.305Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Program.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\Program.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Program.cs",
+              "RelativeToolTip": "Life Simulation\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:49.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LeafTile.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\LeafTile.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\LeafTile.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\LeafTile.cs",
+              "RelativeToolTip": "Life Simulation\\LeafTile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:46.477Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Canvas.cs",
+              "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Canvas.cs",
+              "RelativeDocumentMoniker": "Life Simulation\\Canvas.cs",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Canvas.cs",
+              "RelativeToolTip": "Life Simulation\\Canvas.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T03:36:38.956Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

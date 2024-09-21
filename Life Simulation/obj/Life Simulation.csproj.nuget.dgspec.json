@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\Life Simulation.csproj": {}
+    "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Life Simulation.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\Life Simulation.csproj": {
+    "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Life Simulation.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\Life Simulation.csproj",
+        "projectUniqueName": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Life Simulation.csproj",
         "projectName": "Life Simulation",
-        "projectPath": "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\Life Simulation.csproj",
+        "projectPath": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\Life Simulation.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\obj\\",
+        "outputPath": "C:\\Users\\User\\source\\repos\\Life Simulation\\live-sim\\Life Simulation\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

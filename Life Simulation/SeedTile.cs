@@ -14,7 +14,7 @@ namespace Life_Simulation
 
             this.game = game;
 
-            this.game.root = root;
+            root.Energy = _starterEnrgy;
         }
 
         public SeedTile(Vector2 position, Game game)
@@ -25,8 +25,10 @@ namespace Life_Simulation
 
             this.game = game;
 
-            this.game.root = root;
+            root.Energy = _starterEnrgy;
         }
+
+        private int _starterEnrgy;
 
         public byte[] root_gen = new byte[4];
         public byte[] root_sec_gen = new byte[4];

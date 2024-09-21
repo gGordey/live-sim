@@ -16,13 +16,29 @@ namespace Life_Simulation
 
         private int _maxEnergy = 15;
 
-        public int Enery { get { return _energy; } set { if (value < EnergyLimit) { _energy = value; }; if (value <= 0) { Die(); }; } }
+        private int _energyConsuming;
+
+        public int Energy { get { return _energy; } set 
+            {
+                if (value < EnergyLimit) 
+                {
+                    _energy = value; 
+                }
+                if (value <= 0) { Die(); }; 
+            } }
 
         public int EnergyLimit { get { return _maxEnergy; } set { _maxEnergy = value; } } 
+
+        public int EnergyConsuming { get { return _energyConsuming; } set { _energyConsuming = value; } }
 
         private void Die()
         {
 
+        }
+
+        private void NewTurn()
+        {
+            Enery -= EnergyConsuming;
         }
     }
 }
