@@ -78,6 +78,8 @@ namespace Life_Simulation
 
                 case 2: return new SavingTile(root);
 
+                case 3: return new FlowerTile(root);
+
                 default: return new FreeTile();
             }
         }

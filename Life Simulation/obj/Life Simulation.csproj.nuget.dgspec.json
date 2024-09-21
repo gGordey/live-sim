@@ -1,32 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\Life Simulation.csproj": {}
+    "/home/ggorgey/MyProg/c#/live-sim/Life Simulation/Life Simulation.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\Life Simulation.csproj": {
+    "/home/ggorgey/MyProg/c#/live-sim/Life Simulation/Life Simulation.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\Life Simulation.csproj",
+        "projectUniqueName": "/home/ggorgey/MyProg/c#/live-sim/Life Simulation/Life Simulation.csproj",
         "projectName": "Life Simulation",
-        "projectPath": "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\Life Simulation.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\source\\repos\\Life Simulation\\Life Simulation\\obj\\",
+        "projectPath": "/home/ggorgey/MyProg/c#/live-sim/Life Simulation/Life Simulation.csproj",
+        "packagesPath": "/home/ggorgey/.nuget/packages/",
+        "outputPath": "/home/ggorgey/MyProg/c#/live-sim/Life Simulation/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/ggorgey/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -39,11 +32,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -65,7 +53,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.108/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

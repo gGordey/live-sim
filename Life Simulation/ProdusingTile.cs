@@ -16,12 +16,13 @@ namespace Life_Simulation
         public override void NextTurn(Game game)
         {
             base.NextTurn(game);
+            
             ProduseEnergy();
         }
 
         private void ProduseEnergy()
         {
-            root.Enery += energy_produsing;
+            root.Energy += energy_produsing;
         }
     }
 }

@@ -34,6 +34,11 @@ namespace Life_Simulation
             this.game = game;
         }
 
+        public virtual void Start()
+        {
+            
+        }
+
         private void Update()
         {
 
@@ -51,6 +56,7 @@ namespace Life_Simulation
             min_energy_level = energy_needed;
             _energy_consuming = energy_consuming;
             root = rt;
+            root.EnergyConsuming = _energy_consuming;
         }
         public void Construct(char symb, ConsoleColor symb_col)
         {

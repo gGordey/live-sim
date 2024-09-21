@@ -9,13 +9,11 @@ namespace Life_Simulation
 
         private float SunLevel = 1.0f;
 
-        private static Vector2 field_size = new Vector2(40, 20);
+        private static Vector2 field_size = new Vector2 (40, 20);
 
         private Tile[] tiles = new Tile[field_size.X * field_size.Y];
 
         private Canvas canvas = new Canvas();
-
-        public Root root;
 
         public void NewTurn()
         {
@@ -28,7 +26,9 @@ namespace Life_Simulation
             canvas.fieldHeight = field_size.Y;
 
             FillMap();
-            NewTile(new Vector2(5, 5), new RootTile(new Root ()));
+            
+            NewTile(new Vector2(20, 10), new SeedTile (new Vector2(5,5), this));
+            
             DrawTiles();
 
             while (true)
@@ -46,11 +46,11 @@ namespace Life_Simulation
             Tile[] tiles_cp = (Tile[])tiles.Clone();
             for (int i = 0; i < tiles_cp.Length; i++)
             {
-                if (!tiles_cp[i].IsAlive) 
-                {
-                    tiles_cp[i] = new FreeTile(tiles_cp[i].Position);
-                    continue;
-                }
+                // if (!tiles_cp[i].IsAlive) 
+                // {
+                //     tiles_cp[i] = new FreeTile(tiles_cp[i].Position);
+                //     continue;
+                // }
                 tiles_cp[i].NextTurn(this);
             }
         }
@@ -89,6 +89,8 @@ namespace Life_Simulation
             tiles[GetTileIndFromPosition(position)] = tile;
 
             tile.Position = position;
+
+            tile.Start();
         }
 
         public void TryAddTile(Vector2 position, Tile tile)
@@ -101,15 +103,23 @@ namespace Life_Simulation
 
         public void MoveTile(Tile tile, Vector2 position)
         {
-            if (!IsTileFree(position) && position.X < field_size.X && position.Y < field_size.Y)
+            if (IsTileFree(position) && position.X < field_size.X && position.Y < field_size.Y)
             {
                 SeedTile _tile = (SeedTile)tile;
 
-                tiles[GetTileIndFromPosition(tile.Position)] = new RootTile(tile.root, tile.Position, _tile.root_gen, _tile.root_sec_gen);
+                tiles[GetTileIndFromPosition(_tile.Position)] = new RootTile(tile.root, tile.Position, _tile.root_gen, _tile.root_sec_gen);
 
-                tile.Position = position;
+                _tile.Position = position;
 
-                tiles[GetTileIndFromPosition(position)] = tile;
+                tiles[GetTileIndFromPosition(position)] = _tile;
+
+                System.Console.WriteLine("IF not work");
+            }
+            else
+            {
+                System.Console.WriteLine("is free: "+ IsTileFree(position));
+                System.Console.WriteLine("x: "+(position.X < field_size.X));
+                System.Console.WriteLine("y: "+(position.Y < field_size.Y));
             }
         }
 
