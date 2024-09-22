@@ -34,6 +34,11 @@ namespace Life_Simulation
             this.game = game;
         }
 
+        public virtual void Start()
+        {
+            
+        }
+
         private void Update()
         {
 

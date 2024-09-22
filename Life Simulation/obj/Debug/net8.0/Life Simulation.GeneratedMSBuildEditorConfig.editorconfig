@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Life_Simulation
-build_property.ProjectDir = C:\Users\User\source\repos\Life Simulation\Life Simulation\
+build_property.ProjectDir = /home/ggorgey/MyProg/c#/live-sim/Life Simulation/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
