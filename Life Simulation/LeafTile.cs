@@ -10,14 +10,23 @@ namespace Life_Simulation
     {
         public LeafTile(Root root, Vector2 positon)
         {
-            Construct('@', ConsoleColor.Green, 4, 1, root);
+            Construct('@', ConsoleColor.Green, 4, 0, root, 30);
 
             Position = positon;
+
+            EnergyProdusing = 4;
         }
 
         public LeafTile(Root root) 
         {
-            Construct('@', ConsoleColor.Green, 4, 1, root);
+            Construct('@', ConsoleColor.Green, 4, 0, root, 30);
+
+            EnergyProdusing = 4;
+        }
+
+        public override void ProduseEnergy()
+        {
+            root.Energy += EnergyProdusing * game.SunLevel;
         }
     }
 }

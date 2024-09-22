@@ -19,7 +19,7 @@ namespace Life_Simulation
 
             Console.Write(tile.Symbol + " ");
 
-            if (tile.Position.X == width - 1) Console.Write("\n"); 
+            if (tile.Position.X == width - 1) Console.Write("|\n"); 
         }
 
         public void DrawAllTiles (Tile[] tiles)
@@ -30,6 +30,11 @@ namespace Life_Simulation
             {
                 DrawTile(tile, _field_width);
             }
+            for (int i = 0; i < _field_width; i++)
+            {
+                Console.Write("--");
+            }
+            Console.Write('\n');
         }
     }
 }

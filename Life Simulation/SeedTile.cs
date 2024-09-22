@@ -10,40 +10,58 @@ namespace Life_Simulation
 {
     class SeedTile : Tile
     {
-        public SeedTile(Game game)
-        {
-            Construct('&', ConsoleColor.Cyan, 0, 2, new Root());
-
-            this.game = game;
-        }
-
-        public SeedTile(Vector2 position, Game game)
+        public SeedTile(Vector2 position)
         {
             Position = position;
 
-            Construct('&', ConsoleColor.Cyan, 0, 2, new Root());
+            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 120);
 
-            this.game = game;
+            root.seed = this;
         }
 
+        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg)
+        {
+            Position = position;
+
+            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 120);
+
+            root.seed = this;
+
+            this.base_gen = base_gen;
+
+            root_base_gen = rfg;
+            root_base_second_gen = rsg;
+        }
+
+        private byte[][] base_gen;
         public byte[] root_gen = new byte[4];
+        private byte[] root_base_gen;
+
         public byte[] root_sec_gen = new byte[4];
+        private byte[] root_base_second_gen;
+
 
         private static byte gen_size = 10;
+        private static byte gens_amnd = 3;
 
-        private byte[] gen = new byte[gen_size];
+        public byte[][] gen = new byte[gens_amnd][];
+
         private byte currentGen = 0;
+        private byte currentStep = 0;
         /*
          * GEN:
-         * 0 - 3 -> movement ( watch Move method ) [0]
-         * 0 - 3 -> plant [1]
-         * 0 - 3 -> priority planting dir [2]
-         * 0 - 10 -> sleep for N moves [3]
+         * 0 - 3 -> movement ( watch Move method ) - [0]
+         * 0 - 3 -> plant - [1]
+         * 0 - 3 -> priority planting dir - [2]
+         * 0 - 3 -> if ( watch ReadIf method ) - [3]
+         * 0 - 3 -> switch current gen to N if [3] is true - [4]
          */
 
         public override void NextTurn(Game game)
         {
             base.NextTurn(game);
+
+            root.NewTurn();
             
             ReadGen();
         }
@@ -57,13 +75,33 @@ namespace Life_Simulation
             NewRootGen();
         }
 
+        public override void Die()
+        {
+            base.Die();
+            root.Die();
+        }
+
         private void NewGen()
         {
             Random r = new Random ();
 
-            for (int i = 0; i < gen_size; i++)
+            for (int i = 0; i < gens_amnd; i++)
             {
-                gen[i] = (byte)r.Next(3);
+                if (base_gen != null) { gen[i] = base_gen[i]; }
+                else { gen[i] = new byte[10]; }
+
+                for (int j = 0; j < 10; j++)
+                {
+                    if (base_gen == null || r.Next(100) < 10)
+                    {
+                        gen[i][j] = (byte)r.Next(4);
+                        
+                    }
+                    else
+                    {
+                        gen[i][j] = base_gen[i][j];
+                    }
+                }
             }
         }
         private void NewRootGen()
@@ -72,10 +110,19 @@ namespace Life_Simulation
 
             for (int i = 0; i < 4; i++)
             {
-                root_gen[i] = (byte)r.Next(3);
-                root_sec_gen[i] = (byte)r.Next(3);
+                if (root_base_gen != null)
+                {
+                    root_gen[i] = root_base_gen[i];
+                    root_sec_gen[i] = root_base_second_gen[i];
+                }
+                if (root_base_gen == null || r.Next(100) < 10) 
+                {
+                    root_gen[i] = (byte)r.Next(5);
+                    root_sec_gen[i] = (byte)r.Next(5);
+                }
             }
         }
+
         private void Move(byte dir)
         {
             Vector2 move = new Vector2();
@@ -104,6 +151,10 @@ namespace Life_Simulation
                     new_tile = new FlowerTile (root);
                     break;
                 
+                case 3:
+                    new_tile = new ElectroTile (root);
+                    break;
+                
                 default:
                     new_tile = new FreeTile ();
                     break;
@@ -111,7 +162,9 @@ namespace Life_Simulation
 
             if (game.IsTileFree(GetPositionFromInd(priority)))
             {
+                new_tile.Position = Position + GetPositionFromInd(priority);
                 game.TryAddTile(Position + GetPositionFromInd(priority), new_tile);
+
             }
             else
             {
@@ -119,6 +172,7 @@ namespace Life_Simulation
                 {
                     if (game.IsTileFree(GetPositionFromInd(i)))
                     {
+                        new_tile.Position = Position + GetPositionFromInd(i);
                         game.TryAddTile(Position + GetPositionFromInd(i), new_tile);
                     }
                 }
@@ -127,17 +181,37 @@ namespace Life_Simulation
 
         }
 
+        private bool ReadIf(byte ind)
+        {
+            switch (ind)
+            {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    return !game.IsTileFree(Position+GetPositionFromInd(ind));
+                
+                default:
+                    return false;
+            }
+        }
+
         private void ReadGen()
         {
-            if  (currentGen == 0) { Move(gen[0]); }
+            if  (currentStep == 0) { Move(gen[currentGen][0]); }
 
-            else if (currentGen == 1) { GrowTile(gen[1], gen[2]); }
+            else if (currentStep == 1) { GrowTile(gen[currentGen][1], gen[currentGen][2]); }
 
-            else if (currentGen == 3) {}
+            else if (currentStep == 3) 
+            {
+                if (ReadIf(gen[currentGen][3]))
+                {
+                    if (gen[currentGen][4] < gen.Length) {currentGen = gen[currentGen][4];}
+                }
+            }
 
-            if (currentGen < 4) {currentGen++;}
-
-            else {currentGen = 0;}
+            if (currentStep < 4) {currentStep++;}
+            else {currentStep = 0;}
         }
 
         private Vector2 GetPositionFromInd(byte ind)

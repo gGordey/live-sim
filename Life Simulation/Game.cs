@@ -5,15 +5,17 @@ namespace Life_Simulation
 {
     class Game
     {
-        private const char backGrounSymbol = ' ';
+        public float SunLevel = 1.0f;
 
-        private float SunLevel = 1.0f;
+        private static Vector2 field_size = new Vector2 (80, 50);
 
-        private static Vector2 field_size = new Vector2 (40, 20);
+        private static byte spaceBetweenTiles = 10;
 
         private Tile[] tiles = new Tile[field_size.X * field_size.Y];
 
         private Canvas canvas = new Canvas();
+
+        private bool is_there_any_life = true;
 
         public void NewTurn()
         {
@@ -24,34 +26,57 @@ namespace Life_Simulation
         {
             canvas.fieldWidth = field_size.X;
             canvas.fieldHeight = field_size.Y;
+            while(true)
+            {   
+                is_there_any_life = true;
+                FillMap();
+                for (byte x = 1, y = 1; ; x += spaceBetweenTiles)
+                {
+                    NewTile(new Vector2 (x, y), new SeedTile (new Vector2(x,y)));
+                    if (x >= field_size.X)
+                    {
+                        y += spaceBetweenTiles;
+                        x = 0;
+                        if (y >= field_size.Y) { break; }
+                    }
+                }
 
-            FillMap();
-            
-            NewTile(new Vector2(20, 10), new SeedTile (new Vector2(5,5), this));
-            
-            DrawTiles();
+                // NewTile(new Vector2 (10, 10), new SeedTile (new Vector2(10, 10)));
+                
+                // for (int i = 0; i < 100; i++)
+                // {
+                //     NewTurn();
+                // } 
+                // Thread.Sleep(10000);
 
-            while (true)
-            {
-                NewTurn();
+                while (is_there_any_life)
+                {
+                    NewTurn();
 
-                DrawTiles();
+                    DrawTiles();
 
-                Thread.Sleep(500);
+                    Thread.Sleep(500);
+                }
             }
         }
 
         private void UpdateTiles()
         {
+            int life_counter = 0;
             Tile[] tiles_cp = (Tile[])tiles.Clone();
             for (int i = 0; i < tiles_cp.Length; i++)
             {
-                // if (!tiles_cp[i].IsAlive) 
-                // {
-                //     tiles_cp[i] = new FreeTile(tiles_cp[i].Position);
-                //     continue;
-                // }
-                tiles_cp[i].NextTurn(this);
+                if (tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive && !IsTileFree(tiles_cp[i].Position)) 
+                {
+                    tiles[i] = new FreeTile(tiles_cp[i].Position);
+                    continue;
+                }
+                tiles[i].NextTurn(this);
+                life_counter++;
+            }
+            if (life_counter == 0)
+            {
+                is_there_any_life = false;
             }
         }
 
@@ -63,6 +88,7 @@ namespace Life_Simulation
         public bool IsTileFree(Vector2 position)
         {
             if (position.X >= field_size.X || position.Y >= field_size.Y || position.Y < 0 || position.X < 0) { return false; }
+
             return tiles[GetTileIndFromPosition(position)].GetType() == typeof(FreeTile);
         }
 
@@ -86,11 +112,13 @@ namespace Life_Simulation
 
         private void NewTile(Vector2 position, Tile tile)
         {
+            tile.Start();
+
             tiles[GetTileIndFromPosition(position)] = tile;
 
             tile.Position = position;
 
-            tile.Start();
+            tile.game = this;
         }
 
         public void TryAddTile(Vector2 position, Tile tile)
@@ -99,6 +127,15 @@ namespace Life_Simulation
             {
                 NewTile(position, tile);
             }
+        }
+
+        public void ReplaceTile(Vector2 position, Tile tile)
+        {
+            tiles[GetTileIndFromPosition(position)] = tile;
+
+            tile.Position = position;
+
+            tile.Start();
         }
 
         public void MoveTile(Tile tile, Vector2 position)
@@ -112,14 +149,6 @@ namespace Life_Simulation
                 _tile.Position = position;
 
                 tiles[GetTileIndFromPosition(position)] = _tile;
-
-                System.Console.WriteLine("IF not work");
-            }
-            else
-            {
-                System.Console.WriteLine("is free: "+ IsTileFree(position));
-                System.Console.WriteLine("x: "+(position.X < field_size.X));
-                System.Console.WriteLine("y: "+(position.Y < field_size.Y));
             }
         }
 

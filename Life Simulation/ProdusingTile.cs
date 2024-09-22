@@ -20,9 +20,9 @@ namespace Life_Simulation
             ProduseEnergy();
         }
 
-        private void ProduseEnergy()
+        public virtual void ProduseEnergy()
         {
-            root.Energy += energy_produsing;
+            root.Energy += EnergyProdusing;
         }
     }
 }

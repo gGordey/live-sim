@@ -12,28 +12,26 @@ namespace Life_Simulation
 
         private List<Tile> tiles = new List<Tile>();
 
-        private int _energy = 0;
+        private float _energy = 100;
 
-        private int _maxEnergy = 15;
+        private int _maxEnergy = 100;
 
-        private int _energyConsuming = 0;
+        private int _energyConsuming = 1;
 
-        private int _happyness = 0;
+        public bool IsAlive = true;
 
-        public int Energy 
+        public SeedTile seed;
+
+        public float Energy 
         { 
             get { return _energy; } 
 
             set 
             {
-                if (value < EnergyLimit) 
+                if (value <= EnergyLimit) 
                 {
                     _energy = value; 
                 }
-                if (value <= 0) 
-                {
-                    Die();
-                } 
             } 
         }
 
@@ -41,15 +39,20 @@ namespace Life_Simulation
 
         public int EnergyConsuming {get { return _energyConsuming; } set { _energyConsuming = value; }} 
 
-        public int Happyness {get { return _happyness; } set { _happyness = value; }} 
-        private void Die()
+        public void Die()
         {
-
+            //System.Console.WriteLine("DIIIIIEEED");
+            IsAlive = false;
         }
 
         public void NewTurn()
         {
-            Energy -= EnergyConsuming;
+            if (IsAlive) 
+            {
+                Energy -= EnergyConsuming;
+                if (Energy <= 0) {Die(); return;}
+                //System.Console.WriteLine("e "+Energy+"\nec "+EnergyConsuming);
+            }
         }
 
     }

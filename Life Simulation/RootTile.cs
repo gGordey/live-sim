@@ -14,21 +14,20 @@ namespace Life_Simulation
 
         private byte[] second_gen = new byte[4];
 
+        private int life_length = 200;
+
         public RootTile(Root root)
         {
-            this.root = root;
-
-            Construct('*', ConsoleColor.DarkYellow);
+            Construct('*', ConsoleColor.DarkYellow, 1, 0, root, life_length);
         }
 
         public RootTile(Root root, Vector2 pos, byte[] gen, byte[] second_gen)
         {
             this.gen = gen;
-            this.root = root;
             this.second_gen = second_gen;
             this.Position = pos;
 
-            Construct('*', ConsoleColor.DarkYellow);
+            Construct('*', ConsoleColor.DarkYellow, 1, 0, root, life_length);
         }
 
         private Vector2[] directions = { new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 0) };
@@ -58,13 +57,17 @@ namespace Life_Simulation
 
             if (currentStep <= 3)
             {
-                Grow(currentStep);
+                Grow();
             }
         }
 
-        private void Grow(int ind)
+        private void Grow()
         {
-            game.TryAddTile(Position + directions[currentStep], ReadGen(currentStep));
+            Tile new_tile = ReadGen(currentStep);
+
+            //new_tile.Position = Position + directions[currentStep];
+
+            game.TryAddTile(Position + directions[currentStep], new_tile);
         }
         
         private Tile ReadGen(int ind) 
@@ -79,6 +82,8 @@ namespace Life_Simulation
                 case 2: return new SavingTile(root);
 
                 case 3: return new FlowerTile(root);
+
+                case 4: return new ElectroTile(root);
 
                 default: return new FreeTile();
             }

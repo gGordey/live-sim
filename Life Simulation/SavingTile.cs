@@ -12,7 +12,7 @@ namespace Life_Simulation
             this.root = root;
             root.EnergyLimit += energy_saves;
 
-            Construct('%', ConsoleColor.Yellow, 2, 0, root);
+            Construct('%', ConsoleColor.Yellow, 2, 0, root, 40);
         }
 
         public SavingTile(Root root, Vector2 position)
@@ -22,7 +22,13 @@ namespace Life_Simulation
 
             Position = position;
 
-            Construct('%', ConsoleColor.Yellow, 2, 0, root);
+            Construct('%', ConsoleColor.Yellow, 2, 0, root, 40);
+        }
+
+        public override void Die()
+        {
+            base.Die();
+            root.Energy -= energy_saves;
         }
     }
 }
