@@ -41,17 +41,20 @@ namespace Life_Simulation
 
         public void Die()
         {
-            //System.Console.WriteLine("DIIIIIEEED");
             IsAlive = false;
+            Energy = -1000;
         }
 
         public void NewTurn()
         {
+            Energy -= EnergyConsuming;
             if (IsAlive) 
-            {
-                Energy -= EnergyConsuming;
+            {   
                 if (Energy <= 0) {Die(); return;}
-                //System.Console.WriteLine("e "+Energy+"\nec "+EnergyConsuming);
+            }
+            if (!seed.IsPlased)
+            {
+                Die();
             }
         }
 

@@ -4,7 +4,7 @@ namespace Life_Simulation
 {
     class FreeTile : Tile
     {
-        private char s = ' ';
+        private char s = '`';
         public FreeTile(int x, int y)
         {
             Construct(s, ConsoleColor.White);

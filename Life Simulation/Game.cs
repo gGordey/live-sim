@@ -9,7 +9,7 @@ namespace Life_Simulation
 
         private static Vector2 field_size = new Vector2 (80, 50);
 
-        private static byte spaceBetweenTiles = 10;
+        private static byte spaceBetweenTiles = 5;
 
         private Tile[] tiles = new Tile[field_size.X * field_size.Y];
 
@@ -43,7 +43,7 @@ namespace Life_Simulation
 
                 // NewTile(new Vector2 (10, 10), new SeedTile (new Vector2(10, 10)));
                 
-                // for (int i = 0; i < 100; i++)
+                // for (int i = 0; i < 1000; i++)
                 // {
                 //     NewTurn();
                 // } 
@@ -55,7 +55,7 @@ namespace Life_Simulation
 
                     DrawTiles();
 
-                    Thread.Sleep(500);
+                    Thread.Sleep(600);
                 }
             }
         }
@@ -63,16 +63,22 @@ namespace Life_Simulation
         private void UpdateTiles()
         {
             int life_counter = 0;
+
             Tile[] tiles_cp = (Tile[])tiles.Clone();
+
             for (int i = 0; i < tiles_cp.Length; i++)
             {
-                if (tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive && !IsTileFree(tiles_cp[i].Position)) 
+                if (IsTileFree(tiles_cp[i].Position) || !tiles_cp[i].IsAlive || (tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive))//((tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive) || IsTileFree(tiles_cp[i].Position))
                 {
                     tiles[i] = new FreeTile(tiles_cp[i].Position);
                     continue;
                 }
-                tiles[i].NextTurn(this);
-                life_counter++;
+                tiles_cp[i].NextTurn(this);
+            }
+            for (int i = 0; i < tiles_cp.Length; i++)
+            {
+                //tiles_cp[i].NextTurn(this);
+                if (!IsTileFree(tiles[i].Position)) { life_counter++; }
             }
             if (life_counter == 0)
             {
@@ -87,14 +93,14 @@ namespace Life_Simulation
 
         public bool IsTileFree(Vector2 position)
         {
-            if (position.X >= field_size.X || position.Y >= field_size.Y || position.Y < 0 || position.X < 0) { return false; }
+            if (!IsTileInField(position)) { return false; }
 
             return tiles[GetTileIndFromPosition(position)].GetType() == typeof(FreeTile);
         }
 
         private void FillMap()
         {
-            for (int x = 0, y = 0, c = 0; ; ++x, ++c)
+            for (int x = 0, y = 0; ; x++)
             {
                 if ( x == field_size.X )
                 {
@@ -104,15 +110,15 @@ namespace Life_Simulation
 
                 if (y == field_size.Y) { break; }
 
-                tiles[c] = new FreeTile(x, y);
-    
-                
+                tiles[GetTileIndFromPosition(new Vector2(x, y))] = new FreeTile(x, y);   
             }
         }
 
         private void NewTile(Vector2 position, Tile tile)
         {
             tile.Start();
+
+            tiles[GetTileIndFromPosition(position)].IsPlased = false;
 
             tiles[GetTileIndFromPosition(position)] = tile;
 
@@ -131,6 +137,11 @@ namespace Life_Simulation
 
         public void ReplaceTile(Vector2 position, Tile tile)
         {
+            if (!IsTileInField(position)) {return;}
+            if (tiles[GetTileIndFromPosition(position)].GetType() == typeof(SeedTile)) { return; }
+
+            tiles[GetTileIndFromPosition(position)].IsPlased = false;
+
             tiles[GetTileIndFromPosition(position)] = tile;
 
             tile.Position = position;
@@ -140,7 +151,7 @@ namespace Life_Simulation
 
         public void MoveTile(Tile tile, Vector2 position)
         {
-            if (IsTileFree(position) && position.X < field_size.X && position.Y < field_size.Y)
+            if (IsTileFree(position) && IsTileInField(position))
             {
                 SeedTile _tile = (SeedTile)tile;
 
@@ -155,6 +166,11 @@ namespace Life_Simulation
         private int GetTileIndFromPosition(Vector2 position)
         {
             return position.Y * field_size.X + position.X;
+        }
+
+        private bool IsTileInField(Vector2 position)
+        {
+            return position.X >= 0 && position.X < field_size.X && position.Y >= 0 && position.Y < field_size.Y;
         }
     }
 }

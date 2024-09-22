@@ -31,6 +31,8 @@ namespace Life_Simulation
 
         public ConsoleColor Color = ConsoleColor.White;
 
+        public bool IsPlased = true;
+
         public Tile(Vector2 position) { _position = position; }
         public Tile() { _position = new Vector2(); }
 
@@ -51,13 +53,15 @@ namespace Life_Simulation
             Age++;
 
             if (Age >= _life_length) {Die();}
+
+            if (root != null && !root.IsAlive) {Die();}
         }
 
         public virtual void Die()
         {
             IsAlive = false;
 
-            // if (game != null) {game.ReplaceTile(Position, new FreeTile());}
+            if (game != null) {game.ReplaceTile(Position, new FreeTile());}
             
             if (root == null) { return; }
 

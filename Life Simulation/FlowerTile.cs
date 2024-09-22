@@ -5,8 +5,8 @@ namespace Life_Simulation
     class FlowerTile : Tile
     {
         private byte grown_level = 0;
-        private const byte needed_level = 10;
-        private const byte energy_for_growing = 2;
+        private const byte needed_level = 5;
+        private const byte energy_for_growing = 4;
 
         private int life_length = 32;
         public FlowerTile (Root root)
@@ -24,6 +24,8 @@ namespace Life_Simulation
         {
             base.NextTurn(game);
 
+            if (!root.IsAlive) { game.ReplaceTile(Position, new FreeTile(Position)); return; }
+
             if (root.Energy >= energy_for_growing*2) { grown_level++; root.Energy -= energy_for_growing; }
 
             if (grown_level >= needed_level) { Die();}
@@ -31,7 +33,9 @@ namespace Life_Simulation
 
         public override void Die()
         {
+            //base.Die();
             game.ReplaceTile(Position, new SeedTile(Position, root.seed.gen, root.seed.root_gen, root.seed.root_sec_gen));   
+            root.EnergyConsuming += 1;
         }
     }
 }

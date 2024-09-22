@@ -44,6 +44,8 @@ namespace Life_Simulation
 
         public override void NextTurn(Game game)
         {
+            if (!root.IsAlive) { Die(); return; }
+
             base.NextTurn(game);
 
             for (byte i = 0; i < 4; i++)
@@ -59,6 +61,13 @@ namespace Life_Simulation
             {
                 Grow();
             }
+        }
+
+        public override void Die()
+        {
+            base.Die();
+            gen = new byte[4];
+            second_gen = new byte[4];
         }
 
         private void Grow()
