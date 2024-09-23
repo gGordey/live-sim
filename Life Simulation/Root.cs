@@ -10,7 +10,7 @@ namespace Life_Simulation
     {
         public Root() { }
 
-        private List<Tile> tiles = new List<Tile>();
+        public List<Tile> tiles = new List<Tile>();
 
         private float _energy = 100;
 
@@ -40,9 +40,12 @@ namespace Life_Simulation
         public int EnergyConsuming {get { return _energyConsuming; } set { _energyConsuming = value; }} 
 
         public void Die()
-        {
+        {   
+            foreach (Tile tile in tiles)
+            {
+                if (tile.GetType() != typeof(SeedTile)) { tile.Die(); }
+            }
             IsAlive = false;
-            Energy = -1000;
         }
 
         public void NewTurn()

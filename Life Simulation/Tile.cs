@@ -60,8 +60,6 @@ namespace Life_Simulation
         public virtual void Die()
         {
             IsAlive = false;
-
-            if (game != null) {game.ReplaceTile(Position, new FreeTile());}
             
             if (root == null) { return; }
 
@@ -77,6 +75,7 @@ namespace Life_Simulation
             root = rt;
             root.EnergyConsuming += _energy_consuming;
             root.Energy -= energy_needed;
+            root.tiles.Add(this);
         }
         public void Construct(char symb, ConsoleColor symb_col)
         {

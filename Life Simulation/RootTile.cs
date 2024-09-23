@@ -14,7 +14,7 @@ namespace Life_Simulation
 
         private byte[] second_gen = new byte[4];
 
-        private int life_length = 200;
+        private int life_length = 120;
 
         public RootTile(Root root)
         {
@@ -44,9 +44,9 @@ namespace Life_Simulation
 
         public override void NextTurn(Game game)
         {
-            if (!root.IsAlive) { Die(); return; }
-
             base.NextTurn(game);
+
+            // if (!root.IsAlive) { Die(); return; }
 
             for (byte i = 0; i < 4; i++)
             {
@@ -62,14 +62,6 @@ namespace Life_Simulation
                 Grow();
             }
         }
-
-        public override void Die()
-        {
-            base.Die();
-            gen = new byte[4];
-            second_gen = new byte[4];
-        }
-
         private void Grow()
         {
             Tile new_tile = ReadGen(currentStep);
@@ -94,7 +86,7 @@ namespace Life_Simulation
 
                 case 4: return new ElectroTile(root);
 
-                default: return new FreeTile();
+                default: return new FreeTile(Position);
             }
         }
     }

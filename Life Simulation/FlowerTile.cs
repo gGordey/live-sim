@@ -24,17 +24,26 @@ namespace Life_Simulation
         {
             base.NextTurn(game);
 
-            if (!root.IsAlive) { game.ReplaceTile(Position, new FreeTile(Position)); return; }
-
             if (root.Energy >= energy_for_growing*2) { grown_level++; root.Energy -= energy_for_growing; }
 
-            if (grown_level >= needed_level) { Die();}
+            if (grown_level >= needed_level) { Grow();}
         }
 
-        public override void Die()
+        public void Grow()
         {
-            //base.Die();
-            game.ReplaceTile(Position, new SeedTile(Position, root.seed.gen, root.seed.root_gen, root.seed.root_sec_gen));   
+            game.ReplaceTile
+            (
+                Position, 
+                
+                new SeedTile
+                (
+                    Position,
+                    root.seed.gen,
+                    root.seed.root_gen, 
+                    root.seed.root_sec_gen, 
+                    root.seed.GetPositionFromInd(root.seed.gen[root.seed.currentGen][5])
+                )
+            );   
             root.EnergyConsuming += 1;
         }
     }

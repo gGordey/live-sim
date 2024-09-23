@@ -19,7 +19,7 @@ namespace Life_Simulation
             root.seed = this;
         }
 
-        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg)
+        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg, Vector2 dir)
         {
             Position = position;
 
@@ -31,7 +31,14 @@ namespace Life_Simulation
 
             root_base_gen = rfg;
             root_base_second_gen = rsg;
+
+            is_flying = true;
+
+            flying_dir = dir;
         }
+
+        private bool is_flying = false;
+        private Vector2 flying_dir;
 
         private byte[][] base_gen;
         public byte[] root_gen = new byte[4];
@@ -46,7 +53,7 @@ namespace Life_Simulation
 
         public byte[][] gen = new byte[gens_amnd][];
 
-        private byte currentGen = 0;
+        public byte currentGen = 0;
         private byte currentStep = 0;
         /*
          * GEN:
@@ -55,11 +62,14 @@ namespace Life_Simulation
          * 0 - 3 -> priority planting dir - [2]
          * 0 - 3 -> if ( watch ReadIf method ) - [3]
          * 0 - 3 -> switch current gen to N if [3] is true - [4]
+         * 0 - 3 -> shoot seed dir - [5]
          */
 
         public override void NextTurn(Game game)
         {
             base.NextTurn(game);
+
+            if (is_flying) { Fly(); return; }
 
             root.NewTurn();
             
@@ -81,6 +91,12 @@ namespace Life_Simulation
             root.Die();
         }
 
+        private void Fly()
+        {
+            if (game.IsTileFree(Position + flying_dir)) { game.MoveTile(this, new FreeTile(Position), Position+flying_dir); }
+            else {is_flying = false; }
+        }
+
         private void NewGen()
         {
             Random r = new Random ();
@@ -92,7 +108,7 @@ namespace Life_Simulation
 
                 for (int j = 0; j < 10; j++)
                 {
-                    if (base_gen == null || r.Next(100) < 10)
+                    if (base_gen == null || r.Next(100) < 4.5f)
                     {
                         gen[i][j] = (byte)r.Next(4);
                         
@@ -115,7 +131,7 @@ namespace Life_Simulation
                     root_gen[i] = root_base_gen[i];
                     root_sec_gen[i] = root_base_second_gen[i];
                 }
-                if (root_base_gen == null || r.Next(100) < 10) 
+                if (root_base_gen == null || r.Next(100) < 3.5f) 
                 {
                     root_gen[i] = (byte)r.Next(5);
                     root_sec_gen[i] = (byte)r.Next(5);
@@ -129,7 +145,7 @@ namespace Life_Simulation
             
             move = GetPositionFromInd(dir);
 
-            game.MoveTile(this, Position + move);
+            game.MoveTile(this,new RootTile(root, Position, root_gen, root_sec_gen), Position + move);
         }
 
         private void GrowTile(int tile, byte priority)
@@ -156,7 +172,7 @@ namespace Life_Simulation
                     break;
                 
                 default:
-                    new_tile = new FreeTile ();
+                    new_tile = new FreeTile (Position);
                     break;
             }
 
@@ -210,11 +226,11 @@ namespace Life_Simulation
                 }
             }
 
-            if (currentStep < 4) {currentStep++;}
+            if (currentStep < 5) {currentStep++;}
             else {currentStep = 0;}
         }
 
-        private Vector2 GetPositionFromInd(byte ind)
+        public Vector2 GetPositionFromInd(byte ind)
         {
             switch (ind)
             {

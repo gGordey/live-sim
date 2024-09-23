@@ -5,17 +5,24 @@ namespace Life_Simulation
 {
     class Game
     {
-        public float SunLevel = 1.0f;
+        private static float def_sun_level = 1.2f;
+        public float SunLevel = def_sun_level;
 
-        private static Vector2 field_size = new Vector2 (80, 50);
+        private static Vector2 field_size = new Vector2 (95, 51);
 
-        private static byte spaceBetweenTiles = 5;
+        private static byte spaceBetweenTiles = 4;
 
         private Tile[] tiles = new Tile[field_size.X * field_size.Y];
+
+        private Tile[] new_turn_tiles = new Tile[field_size.X * field_size.Y];
 
         private Canvas canvas = new Canvas();
 
         private bool is_there_any_life = true;
+
+        public int generation = 1;
+        public int turn = 1;
+        public int max_turn = 0;
 
         public void NewTurn()
         {
@@ -53,10 +60,16 @@ namespace Life_Simulation
                 {
                     NewTurn();
 
+                    turn++;
+
+                    if (turn >= max_turn) { max_turn = turn; }
+
                     DrawTiles();
 
-                    Thread.Sleep(600);
+                    Thread.Sleep(400);
                 }
+                generation++;
+                turn = 0;
             }
         }
 
@@ -73,13 +86,15 @@ namespace Life_Simulation
                     tiles[i] = new FreeTile(tiles_cp[i].Position);
                     continue;
                 }
-                tiles_cp[i].NextTurn(this);
             }
+
+            tiles_cp = (Tile[])tiles.Clone();
             for (int i = 0; i < tiles_cp.Length; i++)
             {
-                //tiles_cp[i].NextTurn(this);
-                if (!IsTileFree(tiles[i].Position)) { life_counter++; }
+                tiles_cp[i].NextTurn(this);
+                if (tiles_cp[i].GetType() == typeof(SeedTile)) { life_counter++; }
             }
+            //tiles = (Tile[])tiles_cp.Clone();
             if (life_counter == 0)
             {
                 is_there_any_life = false;
@@ -88,6 +103,9 @@ namespace Life_Simulation
 
         private void DrawTiles()
         {
+            canvas.gen = generation;
+            canvas.turn = turn;
+            canvas.max_turn = max_turn;
             canvas.DrawAllTiles(tiles);
         }
 
@@ -149,13 +167,13 @@ namespace Life_Simulation
             tile.Start();
         }
 
-        public void MoveTile(Tile tile, Vector2 position)
+        public void MoveTile(Tile tile, Tile replace, Vector2 position)
         {
             if (IsTileFree(position) && IsTileInField(position))
             {
                 SeedTile _tile = (SeedTile)tile;
 
-                tiles[GetTileIndFromPosition(_tile.Position)] = new RootTile(tile.root, tile.Position, _tile.root_gen, _tile.root_sec_gen);
+                tiles[GetTileIndFromPosition(_tile.Position)] = replace;//new RootTile(tile.root, tile.Position, _tile.root_gen, _tile.root_sec_gen);
 
                 _tile.Position = position;
 

@@ -11,7 +11,9 @@ namespace Life_Simulation
 
         public int fieldHeight { set { _field_height = value; } }
 
-        private static int x_count;
+        public int gen;
+        public int turn;
+        public int max_turn;
 
         private static void DrawTile(Tile tile, int width)
         {
@@ -21,14 +23,12 @@ namespace Life_Simulation
 
             Console.Write(tile.Symbol + " ");
 
-            if (tile.Position.X == width - 1) {Console.Write("|\n"); x_count = 0;} 
+            //if (tile.Position.X == width - 1) {Console.Write("|\n");} 
         }
 
         public void DrawAllTiles (Tile[] tiles)
         {
             Console.Clear();
-            
-            x_count = 0;
 
             foreach (Tile tile in tiles)
             {
@@ -39,6 +39,8 @@ namespace Life_Simulation
                 Console.Write("--");
             }
             Console.Write('\n');
+            System.Console.WriteLine("SIMULATION  "+gen);
+            System.Console.Write("TURN  "+turn+"  MAX TURN  "+max_turn);
         }
     }
 }
