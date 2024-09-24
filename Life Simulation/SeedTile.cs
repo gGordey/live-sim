@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
@@ -17,6 +18,8 @@ namespace Life_Simulation
             Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 120);
 
             root.seed = this;
+
+            root.StarterEnergy = 101;
         }
 
         public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg, Vector2 dir)
@@ -35,6 +38,8 @@ namespace Life_Simulation
             is_flying = true;
 
             flying_dir = dir;
+
+            root.StarterEnergy = 25;
         }
 
         private bool is_flying = false;
@@ -61,8 +66,9 @@ namespace Life_Simulation
          * 0 - 3 -> plant - [1]
          * 0 - 3 -> priority planting dir - [2]
          * 0 - 3 -> if ( watch ReadIf method ) - [3]
-         * 0 - 3 -> switch current gen to N if [3] is true - [4]
-         * 0 - 3 -> shoot seed dir - [5]
+         * 0 - 3 -> if param - [4]
+         * 0 - 3 -> switch current gen to N if [3] is true - [5]
+         * 0 - 3 -> shoot seed dir - [6]
          */
 
         public override void NextTurn(Game game)
@@ -110,7 +116,9 @@ namespace Life_Simulation
                 {
                     if (base_gen == null || r.Next(100) < 4.5f)
                     {
-                        gen[i][j] = (byte)r.Next(4);
+                        if (j == 5 || j == 3) { gen[i][j] = (byte)r.Next(9); }
+                        else if (j == 4) { gen[i][j] = (byte)r.Next(255);}
+                        else {gen[i][j] = (byte)r.Next(5);}
                         
                     }
                     else
@@ -133,8 +141,8 @@ namespace Life_Simulation
                 }
                 if (root_base_gen == null || r.Next(100) < 3.5f) 
                 {
-                    root_gen[i] = (byte)r.Next(5);
-                    root_sec_gen[i] = (byte)r.Next(5);
+                    root_gen[i] = (byte)r.Next(6);
+                    root_sec_gen[i] = (byte)r.Next(6);
                 }
             }
         }
@@ -144,37 +152,13 @@ namespace Life_Simulation
             Vector2 move = new Vector2();
             
             move = GetPositionFromInd(dir);
-
+            
             game.MoveTile(this,new RootTile(root, Position, root_gen, root_sec_gen), Position + move);
         }
 
         private void GrowTile(int tile, byte priority)
         {
-            Tile new_tile;
-
-
-            switch (tile)
-            {
-                case 0:
-                    new_tile = new LeafTile (root, Position);
-                    break;
-
-                case 1:
-                    new_tile = new SavingTile (root);
-                    break;
-
-                case 2:
-                    new_tile = new FlowerTile (root);
-                    break;
-                
-                case 3:
-                    new_tile = new ElectroTile (root);
-                    break;
-                
-                default:
-                    new_tile = new FreeTile (Position);
-                    break;
-            }
+            Tile new_tile = GetTlileFromInd((byte)tile);
 
             if (game.IsTileFree(GetPositionFromInd(priority)))
             {
@@ -197,18 +181,35 @@ namespace Life_Simulation
 
         }
 
-        private bool ReadIf(byte ind)
+        private bool ReadIf(byte condition, byte param)
         {
-            switch (ind)
+            if (condition <= 3)
             {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    return !game.IsTileFree(Position+GetPositionFromInd(ind));
-                
-                default:
-                    return false;
+                return game.GetTile(GetPositionFromInd(condition)).GetType() == GetTlileFromInd((byte)(param % 4)).GetType();
+            }
+            else if (condition <= 7)
+            {
+                return game.IsTileFree(GetPositionFromInd((byte)(condition-4)));
+            }
+            else if (condition == 8)
+            {
+                return root.Energy > param / 2.55;
+            }
+            else if (condition == 9)
+            {
+                return root.Energy < param / 2.55;
+            }
+            else if (condition == 10)
+            {
+                return root.EnergyConsuming > param / 2.55;
+            }
+            else if (condition == 11)
+            {
+                return root.EnergyConsuming < param / 2.55;
+            }
+            else
+            {
+                return true;
             }
         }
 
@@ -220,9 +221,9 @@ namespace Life_Simulation
 
             else if (currentStep == 3) 
             {
-                if (ReadIf(gen[currentGen][3]))
+                if (ReadIf(gen[currentGen][3], gen[currentGen][4]))
                 {
-                    if (gen[currentGen][4] < gen.Length) {currentGen = gen[currentGen][4];}
+                    if (gen[currentGen][5] < gen.Length) {currentGen = gen[currentGen][5]; currentStep = 0;}
                 }
             }
 
@@ -248,6 +249,29 @@ namespace Life_Simulation
 
                 default:
                     return new Vector2();
+            }
+        }
+        public Tile GetTlileFromInd(byte ind)
+        {
+            switch (ind)
+            {
+                case 0:
+                    return new LeafTile (root, Position);
+
+                case 1:
+                    return new SavingTile (root);
+
+                case 2:
+                    return new FlowerTile (root);
+                
+                case 3:
+                    return new ElectroTile (root);
+
+                case 4:
+                    return new KillerTile (root);
+                
+                default:
+                    return new FreeTile (Position);
             }
         }
     }

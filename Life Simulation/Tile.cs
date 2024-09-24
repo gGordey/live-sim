@@ -7,15 +7,15 @@ namespace Life_Simulation
     { 
         private Vector2 _position = new Vector2();
         
-        private int _min_energy_level = 0;
+        private float _min_energy_level = 0;
 
-        private int _energy_consuming = 0;
+        private float _energy_consuming = 0;
 
         private int _age = 0;
 
         private int _life_length = 0;
 
-        public int min_energy_level { get { return _min_energy_level; } set { _min_energy_level = value; } }
+        public float min_energy_level { get { return _min_energy_level; } set { _min_energy_level = value; } }
 
         public Vector2 Position { get { return _position; } set { _position = value; } }
 
@@ -66,7 +66,7 @@ namespace Life_Simulation
             root.EnergyConsuming -= _energy_consuming;
         }
 
-        public void Construct(char symb, ConsoleColor symb_col, int energy_needed, int energy_consuming, Root rt, int life_length)
+        public void Construct(char symb, ConsoleColor symb_col, float energy_needed, float energy_consuming, Root rt, int life_length)
         {
             Symbol = symb;
             Color = symb_col;
@@ -75,6 +75,7 @@ namespace Life_Simulation
             root = rt;
             root.EnergyConsuming += _energy_consuming;
             root.Energy -= energy_needed;
+            min_energy_level = energy_needed;
             root.tiles.Add(this);
         }
         public void Construct(char symb, ConsoleColor symb_col)
