@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
@@ -22,7 +24,7 @@ namespace Life_Simulation
             root.StarterEnergy = 101;
         }
 
-        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg, Vector2 dir)
+        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg, Vector2 dir, Root previous_root)
         {
             Position = position;
 
@@ -40,10 +42,17 @@ namespace Life_Simulation
             flying_dir = dir;
 
             root.StarterEnergy = 25;
+
+            previous_root.NextGeneration.Add(this);
         }
 
         private bool is_flying = false;
         private Vector2 flying_dir;
+
+        private bool is_sleeping = false;
+        private byte sleep_for = 0;
+
+        private bool is_redirth = false;
 
         private byte[][] base_gen;
         public byte[] root_gen = new byte[4];
@@ -68,11 +77,14 @@ namespace Life_Simulation
          * 0 - 3 -> if ( watch ReadIf method ) - [3]
          * 0 - 3 -> if param - [4]
          * 0 - 3 -> switch current gen to N if [3] is true - [5]
-         * 0 - 3 -> shoot seed dir - [6]
+         * 0 - 3 -> extra command - [6]
+         * 0 - 3 -> shoot seed dir - [7]
          */
 
         public override void NextTurn(Game game)
         {
+            if (Sleep()) { return; }
+
             base.NextTurn(game);
 
             if (is_flying) { Fly(); return; }
@@ -103,6 +115,32 @@ namespace Life_Simulation
             else {is_flying = false; }
         }
 
+        private bool Sleep()
+        {
+            if (is_sleeping)
+            {
+                if (sleep_for <= 0)
+                {
+                    is_sleeping = false;
+                    root.EnergyConsuming += 3;
+                    return false;
+                }
+                sleep_for--;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool Sleep(byte length)
+        {
+            is_sleeping = true;
+            sleep_for = length;
+            root.EnergyConsuming -= 3;
+            return true;
+        }
+
         private void NewGen()
         {
             Random r = new Random ();
@@ -116,10 +154,9 @@ namespace Life_Simulation
                 {
                     if (base_gen == null || r.Next(100) < 4.5f)
                     {
-                        if (j == 5 || j == 3) { gen[i][j] = (byte)r.Next(9); }
-                        else if (j == 4) { gen[i][j] = (byte)r.Next(255);}
+                        if (j == 5) { gen[i][j] = (byte)r.Next(9); }
+                        else if (j == 4 || j == 3) { gen[i][j] = (byte)r.Next(255);}
                         else {gen[i][j] = (byte)r.Next(5);}
-                        
                     }
                     else
                     {
@@ -160,6 +197,8 @@ namespace Life_Simulation
         {
             Tile new_tile = GetTlileFromInd((byte)tile);
 
+            if (root.Energy < new_tile.min_energy_level) {return;}
+
             if (game.IsTileFree(GetPositionFromInd(priority)))
             {
                 new_tile.Position = Position + GetPositionFromInd(priority);
@@ -181,36 +220,65 @@ namespace Life_Simulation
 
         }
 
-        private bool ReadIf(byte condition, byte param)
+        private bool ReadIf(byte condition_byte, byte param)
         {
+            float condition = condition_byte / 2.55f / 6.5f;
             if (condition <= 3)
             {
-                return game.GetTile(GetPositionFromInd(condition)).GetType() == GetTlileFromInd((byte)(param % 4)).GetType();
+                return game.GetTile(GetPositionFromInd((byte)condition)).GetType() == GetTlileFromInd((byte)(param % 4)).GetType();
             }
             else if (condition <= 7)
             {
                 return game.IsTileFree(GetPositionFromInd((byte)(condition-4)));
             }
-            else if (condition == 8)
+            else if (condition <= 8)
             {
                 return root.Energy > param / 2.55;
             }
-            else if (condition == 9)
+            else if (condition <= 9)
             {
                 return root.Energy < param / 2.55;
             }
-            else if (condition == 10)
+            else if (condition <= 10)
             {
                 return root.EnergyConsuming > param / 2.55;
             }
-            else if (condition == 11)
+            else if (condition <= 11)
             {
                 return root.EnergyConsuming < param / 2.55;
+            }
+            else if (condition <= 12)
+            {
+                return root.NextGeneration.Count < param / 2.55 / 10;
+            }
+            else if (condition <= 13)
+            {
+                return root.NextGeneration.Count > param / 2.55 / 10;
+            }
+            else if (condition <= 14)
+            {
+                return Age > param / 2.55 / 10;
             }
             else
             {
                 return true;
             }
+        }
+
+        private void Command(byte task)
+        {
+            if (task == 0) { root.Energy -= 6.5f; Age -= 5; }
+            else if (task == 1 && !is_redirth) 
+            { 
+                root.Die(); Age /= 2;  
+                float enrg = root.Energy + root.StarterEnergy / 1.5f;
+                root = new Root();
+                root.seed = this;
+                root.StarterEnergy = enrg;
+                is_redirth = true;
+            }
+            else if (task == 2) { Sleep(10); }
+            else if (task == 3) {Die();}
         }
 
         private void ReadGen()
@@ -227,7 +295,9 @@ namespace Life_Simulation
                 }
             }
 
-            if (currentStep < 5) {currentStep++;}
+            else if (currentStep == 6) { Command(gen[currentGen][6]); }
+
+            if (currentStep < 6) {currentStep++;}
             else {currentStep = 0;}
         }
 

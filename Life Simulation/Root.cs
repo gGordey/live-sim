@@ -12,6 +12,8 @@ namespace Life_Simulation
 
         public List<Tile> tiles = new List<Tile>();
 
+        public List<Tile> NextGeneration = new List<Tile> ();
+
         private float _energy = 35;
 
         private float _start_energy = 0;
@@ -45,7 +47,7 @@ namespace Life_Simulation
 
         public float EnergyConsuming {get { return _energyConsuming; } set { _energyConsuming = value; }} 
 
-        public float StarterEnergy { set { _start_energy = value; }}
+        public float StarterEnergy { set { _start_energy = value; } get {return _start_energy;}}
 
         public void Die()
         {   
@@ -54,6 +56,15 @@ namespace Life_Simulation
                 if (tile.GetType() != typeof(SeedTile)) { tile.Die(); }
             }
             IsAlive = false;
+
+            if (Energy > 0 || StarterEnergy > 0)
+            {
+                _energy += StarterEnergy;
+                foreach (Tile tile in NextGeneration)
+                {
+                    tile.root.StarterEnergy += _energy / NextGeneration.Count;
+                }
+            }
         }
 
         public void NewTurn()

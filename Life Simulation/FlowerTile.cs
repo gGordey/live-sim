@@ -5,8 +5,8 @@ namespace Life_Simulation
     class FlowerTile : Tile
     {
         private byte grown_level = 0;
-        private const byte needed_level = 5;
-        private const byte energy_for_growing = 4;
+        private const byte needed_level = 6;
+        private const float energy_for_growing = 3.1f;
 
         private int life_length = 32;
         public FlowerTile (Root root)
@@ -34,14 +34,15 @@ namespace Life_Simulation
             game.ReplaceTile
             (
                 Position, 
-                
+
                 new SeedTile
                 (
                     Position,
                     root.seed.gen,
                     root.seed.root_gen, 
                     root.seed.root_sec_gen, 
-                    root.seed.GetPositionFromInd(root.seed.gen[root.seed.currentGen][5])
+                    root.seed.GetPositionFromInd(root.seed.gen[root.seed.currentGen][7]),
+                    root
                 )
             );   
             root.EnergyConsuming += 1;
