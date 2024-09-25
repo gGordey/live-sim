@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Life_Simulation
@@ -14,7 +15,9 @@ namespace Life_Simulation
 
         private Tile[] tiles = new Tile[field_size.X * field_size.Y];
 
-        private Tile[] new_turn_tiles = new Tile[field_size.X * field_size.Y];
+        private List<Tile> UpdatedTiles = new List<Tile> ();
+
+        
 
         private Canvas canvas = new Canvas();
 
@@ -29,12 +32,24 @@ namespace Life_Simulation
             UpdateTiles();
         }
 
+        private TerminalInput terminalInput;
+
+        public bool is_simulated;
+        public int amd_of_sim_turns, breakpoin_turn, turns_between_draw, draw_time, not_drawing_turn;
         public void Start()
         {
+            terminalInput = new TerminalInput(this);
+
             canvas.fieldWidth = field_size.X;
             canvas.fieldHeight = field_size.Y;
-            int amd_of_sim_turns = 0;
-            bool is_simulated = false;
+
+            amd_of_sim_turns = 0;
+            breakpoin_turn = 0;
+            is_simulated = false;
+
+            draw_time = 200;
+            not_drawing_turn = 1;
+
             while(true)
             {   
                 is_there_any_life = true;
@@ -47,23 +62,40 @@ namespace Life_Simulation
 
                         if (!is_there_any_life) { generation++; turn = 0; FillMap(); is_there_any_life = true; }
 
-                        if (i % 50 == 0) { Console.Clear(); Console.Write("turn: "+turn+"\nprogress: "+((float)i / amd_of_sim_turns * 100)+" %\nsim "+generation);}
+                        if (i % 50 == 0) { Console.Clear(); Console.Write("turn: "+turn+"\nmax turn: "+max_turn+"\nprogress: "+((float)i / amd_of_sim_turns * 100)+" %\nsim "+generation);}
 
-                        if (turn > 2200) {break;}
+                        if (turn > breakpoin_turn) {break;}
+
+                        if (Console.KeyAvailable) 
+                        {
+                            terminalInput.Start(); 
+                            CloneTilesToUpdatedTiles();
+                        }
                     } 
                     is_simulated = true;
                 }
 
-                while (is_there_any_life)
+                while (is_there_any_life && is_simulated)
                 {
-                    SimulateTurn();
-
+                    for (int i = 0; i < not_drawing_turn; i++)
+                    {
+                        SimulateTurn();
+                        if (Console.KeyAvailable) {terminalInput.Start(); CloneTilesToUpdatedTiles(); break;}
+                    }
+                    
                     DrawTiles();
 
-                    Thread.Sleep(200);
+                    Thread.Sleep(draw_time);
                 }
                 generation++;
                 turn = 0;
+            }
+        }
+        private void CloneTilesToUpdatedTiles()
+        {
+            foreach (Tile tile in tiles)
+            {
+                UpdatedTiles.Add(tile);
             }
         }
 
@@ -84,19 +116,21 @@ namespace Life_Simulation
 
             for (int i = 0; i < tiles_cp.Length; i++)
             {
-                if (IsTileFree(tiles_cp[i].Position) || !tiles_cp[i].IsAlive || (tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive))//((tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive) || IsTileFree(tiles_cp[i].Position))
+                if (!tiles_cp[i].IsAlive || (tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive))//((tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive) || IsTileFree(tiles_cp[i].Position))
                 {
                     tiles[i] = new FreeTile(tiles_cp[i].Position);
+                    UpdatedTiles.Add(tiles[i]);
                     continue;
                 }
             }
-
             tiles_cp = (Tile[])tiles.Clone();
+
             for (int i = 0; i < tiles_cp.Length; i++)
             {
                 tiles_cp[i].NextTurn(this);
                 if (tiles_cp[i].GetType() == typeof(SeedTile)) { life_counter++; }
             }
+
             if (life_counter == 0)
             {
                 is_there_any_life = false;
@@ -108,7 +142,10 @@ namespace Life_Simulation
             canvas.gen = generation;
             canvas.turn = turn;
             canvas.max_turn = max_turn;
-            canvas.DrawAllTiles(tiles);
+            
+            canvas.DrawAllTiles(UpdatedTiles);
+
+            UpdatedTiles = new List<Tile>();
         }
 
         public bool IsTileFree(Vector2 position)
@@ -120,6 +157,7 @@ namespace Life_Simulation
 
         private void FillMap()
         {
+            Console.Clear();
             for (int x = 0, y = 0; ; x++)
             {
                 if ( x == field_size.X )
@@ -131,40 +169,41 @@ namespace Life_Simulation
                 if (y == field_size.Y) { break; }
 
                 tiles[GetTileIndFromPosition(new Vector2(x, y))] = new FreeTile(x, y);   
+                UpdatedTiles.Add(tiles[GetTileIndFromPosition(new Vector2(x, y))]);
             }
             FillLife();
         }
 
         private void FillLife()
         {
-            for (byte x = 1, y = 1; ; x += spaceBetweenTiles)
+            for (byte x = spaceBetweenTiles, y = spaceBetweenTiles; ; x += spaceBetweenTiles)
             {
-                NewTile(new Vector2 (x, y), new SeedTile (new Vector2(x,y)));
                 if (x >= field_size.X)
                 {
                     y += spaceBetweenTiles;
-                    x = 0;
+                    x = spaceBetweenTiles;
                     if (y >= field_size.Y) { break; }
                 }
+                NewTile(new Vector2 (x, y), new SeedTile (new Vector2(x,y)));
             }
         }
 
         private void NewTile(Vector2 position, Tile tile)
         {
-            tile.Start();
+            tile.game = this;
 
-            tiles[GetTileIndFromPosition(position)].IsPlased = false;
+            tile.Start();
 
             tiles[GetTileIndFromPosition(position)] = tile;
 
             tile.Position = position;
 
-            tile.game = this;
+            UpdatedTiles.Add(tile);
         }
 
         public void TryAddTile(Vector2 position, Tile tile)
         {
-            if (IsTileFree(position))
+            if (IsTileFree(position) && IsTileInField(position))
             {
                 NewTile(position, tile);
             }
@@ -173,6 +212,11 @@ namespace Life_Simulation
                 if (IsTileInField(position) && tile.GetType() == typeof(KillerTile) && tiles[GetTileIndFromPosition(position)].GetType() != typeof(RootTile))
                 {
                     tiles[GetTileIndFromPosition(position)].Die();
+
+                    if (tiles[GetTileIndFromPosition(position)].GetType() == typeof(SeedTile))
+                    {
+                        tile.root.Energy += tiles[GetTileIndFromPosition(position)].root.Energy;
+                    }
 
                     NewTile(position, tile);
 
@@ -186,26 +230,16 @@ namespace Life_Simulation
             if (!IsTileInField(position)) {return;}
             if (tiles[GetTileIndFromPosition(position)].GetType() == typeof(SeedTile)) { return; }
 
-            tiles[GetTileIndFromPosition(position)].IsPlased = false;
-
-            tiles[GetTileIndFromPosition(position)] = tile;
-
-            tile.Position = position;
-
-            tile.Start();
+            NewTile(position, tile);
         }
 
         public void MoveTile(Tile tile, Tile replace, Vector2 position)
         {
             if (IsTileFree(position) && IsTileInField(position))
             {
-                SeedTile _tile = (SeedTile)tile;
-
-                tiles[GetTileIndFromPosition(_tile.Position)] = replace;//new RootTile(tile.root, tile.Position, _tile.root_gen, _tile.root_sec_gen);
-
-                _tile.Position = position;
-
-                tiles[GetTileIndFromPosition(position)] = _tile;
+                //SeedTile _tile = (SeedTile)tile;
+                NewTile(tile.Position, replace);
+                NewTile(position, tile);
             }
         }
 
@@ -216,7 +250,7 @@ namespace Life_Simulation
 
         private bool IsTileInField(Vector2 position)
         {
-            return position.X >= 0 && position.X < field_size.X && position.Y >= 0 && position.Y < field_size.Y;
+            return position.X > 0 && position.X < field_size.X && position.Y > 0 && position.Y < field_size.Y;
         }
 
         public Tile GetTile(Vector2 position)

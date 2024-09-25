@@ -46,8 +46,6 @@ namespace Life_Simulation
         {
             base.NextTurn(game);
 
-            // if (!root.IsAlive) { Die(); return; }
-
             for (byte i = 0; i < 4; i++)
             {
                 if (game.IsTileFree(Position+directions[i]))
@@ -90,6 +88,8 @@ namespace Life_Simulation
                 case 4: return new ElectroTile(root);
 
                 case 5: return new KillerTile(root);
+
+                case 6: return new InvestingTile (root);
 
                 default: return new FreeTile(Position);
             }

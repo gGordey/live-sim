@@ -8,7 +8,7 @@ namespace Life_Simulation
 
         public KillerTile(Root root)
         {
-            Construct('#', ConsoleColor.Red, 0.4f, 2, root, 4);
+            Construct('#', ConsoleColor.Red, 0.4f, 1.2f, root, 4);
         }
         public void OnKill()
         {

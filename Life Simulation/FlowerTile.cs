@@ -8,6 +8,8 @@ namespace Life_Simulation
         private const byte needed_level = 6;
         private const float energy_for_growing = 3.1f;
 
+        private byte base_starter_gen_ind;
+
         private int life_length = 32;
         public FlowerTile (Root root)
         {
@@ -41,8 +43,9 @@ namespace Life_Simulation
                     root.seed.gen,
                     root.seed.root_gen, 
                     root.seed.root_sec_gen, 
-                    root.seed.GetPositionFromInd(root.seed.gen[root.seed.currentGen][7]),
-                    root
+                    root.seed.GetPositionFromInd(root.seed.gen[base_starter_gen_ind][8]),
+                    root,
+                    root.seed.defaultGen
                 )
             );   
             root.EnergyConsuming += 1;

@@ -83,6 +83,7 @@ namespace Life_Simulation
             {
                 Die();
             }
+            
         }
 
     }

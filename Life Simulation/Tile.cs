@@ -45,7 +45,7 @@ namespace Life_Simulation
 
         public virtual void Start()
         {
-            
+            energy_construct();
         }
 
         private void Update()
@@ -66,6 +66,13 @@ namespace Life_Simulation
             root.EnergyConsuming -= _energy_consuming;
         }
 
+        private void energy_construct()
+        {
+            if (root == null) {return;}
+            root.EnergyConsuming += _energy_consuming;
+            root.Energy -= min_energy_level;
+        }
+
         public void Construct(char symb, ConsoleColor symb_col, float energy_needed, float energy_consuming, Root rt, int life_length)
         {
             Symbol = symb;
@@ -73,8 +80,6 @@ namespace Life_Simulation
             _energy_consuming = energy_consuming;
             _life_length = life_length;
             root = rt;
-            root.EnergyConsuming += _energy_consuming;
-            root.Energy -= energy_needed;
             min_energy_level = energy_needed;
             root.tiles.Add(this);
         }

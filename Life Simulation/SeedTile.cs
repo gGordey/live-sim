@@ -22,9 +22,12 @@ namespace Life_Simulation
             root.seed = this;
 
             root.StarterEnergy = 101;
+
+            defaultGen = (byte) new Random().Next(gens_amnd);
+            currentGen = defaultGen;
         }
 
-        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg, Vector2 dir, Root previous_root)
+        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg, Vector2 dir, Root previous_root, byte cg)
         {
             Position = position;
 
@@ -44,6 +47,14 @@ namespace Life_Simulation
             root.StarterEnergy = 25;
 
             previous_root.NextGeneration.Add(this);
+
+            this.previous_root = previous_root;
+
+            defaultGen = cg;
+
+            if (new Random().Next(100) < 12) {defaultGen = (byte) new Random().Next(gens_amnd);}
+
+            currentGen = defaultGen;
         }
 
         private bool is_flying = false;
@@ -63,11 +74,12 @@ namespace Life_Simulation
 
 
         private static byte gen_size = 10;
-        private static byte gens_amnd = 3;
+        private static byte gens_amnd = 10;
 
         public byte[][] gen = new byte[gens_amnd][];
 
-        public byte currentGen = 0;
+        public byte currentGen;
+        public byte defaultGen;
         private byte currentStep = 0;
         /*
          * GEN:
@@ -78,8 +90,13 @@ namespace Life_Simulation
          * 0 - 3 -> if param - [4]
          * 0 - 3 -> switch current gen to N if [3] is true - [5]
          * 0 - 3 -> extra command - [6]
-         * 0 - 3 -> shoot seed dir - [7]
+         * 0 - 3 -> command param - [7]
+         * 0 - 3 -> shoot seed dir - [8]
          */
+
+        private float mut = 12f;
+
+        private Root previous_root;
 
         public override void NextTurn(Game game)
         {
@@ -97,8 +114,12 @@ namespace Life_Simulation
         public override void Start()
         {
             base.Start();
+            for (int i = 0; i < game.turn; i += 100)
+            {
+                mut -= mut / 10;
+            }
 
-            NewGen();
+            NewGen(mut);
 
             NewRootGen();
         }
@@ -107,6 +128,10 @@ namespace Life_Simulation
         {
             base.Die();
             root.Die();
+            if (previous_root != null)
+            {
+                previous_root.NextGeneration.Remove(this);
+            }
         }
 
         private void Fly()
@@ -119,6 +144,7 @@ namespace Life_Simulation
         {
             if (is_sleeping)
             {
+                Color = ConsoleColor.Yellow;
                 if (sleep_for <= 0)
                 {
                     is_sleeping = false;
@@ -130,6 +156,7 @@ namespace Life_Simulation
             }
             else
             {
+                Color = ConsoleColor.Cyan;
                 return false;
             }
         }
@@ -141,7 +168,7 @@ namespace Life_Simulation
             return true;
         }
 
-        private void NewGen()
+        private void NewGen(float mutatability)
         {
             Random r = new Random ();
 
@@ -152,10 +179,12 @@ namespace Life_Simulation
 
                 for (int j = 0; j < 10; j++)
                 {
-                    if (base_gen == null || r.Next(100) < 4.5f)
+                    if (base_gen == null || r.Next(100) < mutatability)
                     {
+
                         if (j == 5) { gen[i][j] = (byte)r.Next(9); }
-                        else if (j == 4 || j == 3) { gen[i][j] = (byte)r.Next(255);}
+                        else if (j == 4 || j == 3) { gen[i][j] = (byte)r.Next(255); }
+                        else if (j == 1) { gen[i][j] = (byte)r.Next(6); }
                         else {gen[i][j] = (byte)r.Next(5);}
                     }
                     else
@@ -178,8 +207,8 @@ namespace Life_Simulation
                 }
                 if (root_base_gen == null || r.Next(100) < 3.5f) 
                 {
-                    root_gen[i] = (byte)r.Next(6);
-                    root_sec_gen[i] = (byte)r.Next(6);
+                    root_gen[i] = (byte)r.Next(7);
+                    root_sec_gen[i] = (byte)r.Next(7);
                 }
             }
         }
@@ -197,7 +226,7 @@ namespace Life_Simulation
         {
             Tile new_tile = GetTlileFromInd((byte)tile);
 
-            if (root.Energy < new_tile.min_energy_level) {return;}
+            if (root.Energy < new_tile.min_energy_level*1.5f) {return;}
 
             if (game.IsTileFree(GetPositionFromInd(priority)))
             {
@@ -265,7 +294,7 @@ namespace Life_Simulation
             }
         }
 
-        private void Command(byte task)
+        private void Command(byte task, byte param)
         {
             if (task == 0) { root.Energy -= 6.5f; Age -= 5; }
             else if (task == 1 && !is_redirth) 
@@ -278,7 +307,9 @@ namespace Life_Simulation
                 is_redirth = true;
             }
             else if (task == 2) { Sleep(10); }
-            else if (task == 3) {Die();}
+            else if (task == 3) { Die(); }
+            else if (task == 4) { game.TryAddTile(Position+GetPositionFromInd(param), new KillerTile (root)); }
+            else if (task == 5) { base_gen = gen; NewGen(2f);}
         }
 
         private void ReadGen()
@@ -295,9 +326,9 @@ namespace Life_Simulation
                 }
             }
 
-            else if (currentStep == 6) { Command(gen[currentGen][6]); }
+            else if (currentStep == 6) { Command(gen[currentGen][6], gen[currentGen][7]); }
 
-            if (currentStep < 6) {currentStep++;}
+            if (currentStep < 7) {currentStep++;}
             else {currentStep = 0;}
         }
 
@@ -339,6 +370,9 @@ namespace Life_Simulation
 
                 case 4:
                     return new KillerTile (root);
+
+                case 5:
+                    return new InvestingTile (root);
                 
                 default:
                     return new FreeTile (Position);
