@@ -58,6 +58,8 @@ namespace Life_Simulation
                 {  
                     for (int i = 0; i < amd_of_sim_turns; i++)
                     {
+                        UpdatedTiles.Clear();
+
                         SimulateTurn();
 
                         if (!is_there_any_life) { generation++; turn = 0; FillMap(); is_there_any_life = true; }
@@ -73,7 +75,9 @@ namespace Life_Simulation
                         }
                     } 
                     is_simulated = true;
+                    CloneTilesToUpdatedTiles();
                 }
+                
 
                 while (is_there_any_life && is_simulated)
                 {

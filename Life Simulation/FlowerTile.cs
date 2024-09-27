@@ -44,6 +44,7 @@ namespace Life_Simulation
                     root.seed.root_gen, 
                     root.seed.root_sec_gen, 
                     root.seed.GetPositionFromInd(root.seed.gen[base_starter_gen_ind][8]),
+                    root.seed.flying_dist,
                     root,
                     root.seed.defaultGen
                 )

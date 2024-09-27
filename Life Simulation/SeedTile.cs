@@ -17,7 +17,7 @@ namespace Life_Simulation
         {
             Position = position;
 
-            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 120);
+            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 240);
 
             root.seed = this;
 
@@ -25,13 +25,16 @@ namespace Life_Simulation
 
             defaultGen = (byte) new Random().Next(gens_amnd);
             currentGen = defaultGen;
+
+            flying_dist = 10;
+            left_fly = 10;
         }
 
-        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg, Vector2 dir, Root previous_root, byte cg)
+        public SeedTile(Vector2 position, byte[][] base_gen, byte[] rfg, byte[] rsg, Vector2 dir, int fly_dist, Root previous_root, byte cg)
         {
             Position = position;
 
-            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 120);
+            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 240);
 
             root.seed = this;
 
@@ -44,7 +47,13 @@ namespace Life_Simulation
 
             flying_dir = dir;
 
-            root.StarterEnergy = 25;
+            flying_dist = fly_dist;
+
+            if (new Random().Next(100) < 10) { flying_dist += new Random().Next(2)-1; }
+
+            left_fly = fly_dist;
+
+            root.StarterEnergy = 50;//25;
 
             previous_root.NextGeneration.Add(this);
 
@@ -59,11 +68,13 @@ namespace Life_Simulation
 
         private bool is_flying = false;
         private Vector2 flying_dir;
+        public int flying_dist;
+        private int left_fly;
 
         private bool is_sleeping = false;
         private byte sleep_for = 0;
 
-        private bool is_redirth = false;
+        private bool is_rebirth = false;
 
         private byte[][] base_gen;
         public byte[] root_gen = new byte[4];
@@ -102,9 +113,9 @@ namespace Life_Simulation
         {
             if (Sleep()) { return; }
 
-            base.NextTurn(game);
-
             if (is_flying) { Fly(); return; }
+
+            base.NextTurn(game);
 
             root.NewTurn();
             
@@ -116,7 +127,8 @@ namespace Life_Simulation
             base.Start();
             for (int i = 0; i < game.turn; i += 100)
             {
-                mut -= mut / 10;
+                if (mut < 2.2f) { break; }
+                mut -= mut / 10f;
             }
 
             NewGen(mut);
@@ -136,7 +148,7 @@ namespace Life_Simulation
 
         private void Fly()
         {
-            if (game.IsTileFree(Position + flying_dir)) { game.MoveTile(this, new FreeTile(Position), Position+flying_dir); }
+            if (left_fly > 0 && game.IsTileFree(Position + flying_dir)) { game.MoveTile(this, new FreeTile(Position), Position+flying_dir); left_fly--; }
             else {is_flying = false; }
         }
 
@@ -264,27 +276,27 @@ namespace Life_Simulation
             {
                 return root.Energy > param / 2.55;
             }
+            // else if (condition <= 9)
+            // {
+            //     return root.Energy < param / 2.55;
+            // }
             else if (condition <= 9)
-            {
-                return root.Energy < param / 2.55;
-            }
-            else if (condition <= 10)
             {
                 return root.EnergyConsuming > param / 2.55;
             }
+            // else if (condition <= 11)
+            // {
+            //     return root.EnergyConsuming < param / 2.55;
+            // }
+            // else if (condition <= 12)
+            // {
+            //     return root.NextGeneration.Count < param / 2.55 / 10;
+            // }
             else if (condition <= 11)
-            {
-                return root.EnergyConsuming < param / 2.55;
-            }
-            else if (condition <= 12)
-            {
-                return root.NextGeneration.Count < param / 2.55 / 10;
-            }
-            else if (condition <= 13)
             {
                 return root.NextGeneration.Count > param / 2.55 / 10;
             }
-            else if (condition <= 14)
+            else if (condition <= 12)
             {
                 return Age > param / 2.55 / 10;
             }
@@ -297,14 +309,14 @@ namespace Life_Simulation
         private void Command(byte task, byte param)
         {
             if (task == 0) { root.Energy -= 6.5f; Age -= 5; }
-            else if (task == 1 && !is_redirth) 
+            else if (task == 1 && !is_rebirth) 
             { 
                 root.Die(); Age /= 2;  
                 float enrg = root.Energy + root.StarterEnergy / 1.5f;
                 root = new Root();
                 root.seed = this;
                 root.StarterEnergy = enrg;
-                is_redirth = true;
+                is_rebirth = true;
             }
             else if (task == 2) { Sleep(10); }
             else if (task == 3) { Die(); }
