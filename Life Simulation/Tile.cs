@@ -31,6 +31,32 @@ namespace Life_Simulation
 
         public ConsoleColor Color = ConsoleColor.White;
 
+        private ConsoleColor _clan_color = ConsoleColor.Gray;
+        public ConsoleColor ClanColor
+        { 
+            set {_clan_color = value;}
+
+            get
+            {
+                if (GetType() == typeof(SeedTile) || root == null) { return _clan_color; }
+                else {return root.seed.ClanColor;}
+            }
+        
+        }
+
+        private ConsoleColor _gen_color = ConsoleColor.Gray;
+        public ConsoleColor GenColor 
+        { 
+            set {_gen_color = value;}
+
+            get
+            {
+                if (GetType() == typeof(SeedTile) || root == null) { return _gen_color; }
+                else {return root.seed.GenColor;}
+            }
+        
+        }
+
         public bool IsPlased = true;
 
         public Tile(Vector2 position) { _position = position; }
@@ -50,6 +76,8 @@ namespace Life_Simulation
 
         private void Update()
         {
+            if (_life_length <= 1) { return; }
+
             Age++;
 
             if (Age >= _life_length) {Die();}

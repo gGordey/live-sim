@@ -9,7 +9,17 @@ namespace Life_Simulation
         private static float def_sun_level = 1.9f;
         public float SunLevel = def_sun_level;
 
-        private static Vector2 field_size = new Vector2 (95, 51);
+        public float OverallEnergy = 4.8f;
+
+        public static float oxigen_default = 5f; 
+        public static float carbon_dioxide_default = 5f; 
+
+        public float OxigenLevel;
+        public float CarbonDioxideLivel;
+
+        public static float EnergyPerMineral = 3f;
+
+        private static Vector2 field_size = new Vector2 (190, 100);
 
         private static byte spaceBetweenTiles = 5;
 
@@ -17,11 +27,18 @@ namespace Life_Simulation
 
         private List<Tile> UpdatedTiles = new List<Tile> ();
 
-        
+        public enum DrawMode
+        {
+            Default,
+            Clan,
+            FirstGen
+        }
+
+        public DrawMode OutputMode = DrawMode.Default;
 
         private Canvas canvas = new Canvas();
 
-        private bool is_there_any_life = true;
+        public bool is_there_any_life = true;
 
         public int generation = 1;
         public int turn = 1;
@@ -50,10 +67,18 @@ namespace Life_Simulation
             draw_time = 200;
             not_drawing_turn = 1;
 
+            is_there_any_life = false;
+
             while(true)
             {   
-                is_there_any_life = true;
-                FillMap();
+                CarbonDioxideLivel = carbon_dioxide_default;
+                OxigenLevel = oxigen_default;
+
+                if (!is_there_any_life)
+                {
+                    is_there_any_life = true;
+                    FillMap();
+                }
                 if (!is_simulated)
                 {  
                     for (int i = 0; i < amd_of_sim_turns; i++)
@@ -91,8 +116,11 @@ namespace Life_Simulation
 
                     Thread.Sleep(draw_time);
                 }
-                generation++;
-                turn = 0;
+                if (!is_there_any_life)
+                {
+                    generation++;
+                    turn = 0;
+                }
             }
         }
         private void CloneTilesToUpdatedTiles()
@@ -120,7 +148,7 @@ namespace Life_Simulation
 
             for (int i = 0; i < tiles_cp.Length; i++)
             {
-                if (!tiles_cp[i].IsAlive || (tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive))//((tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive) || IsTileFree(tiles_cp[i].Position))
+                if (!tiles_cp[i].IsAlive)//((tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive) || IsTileFree(tiles_cp[i].Position))
                 {
                     tiles[i] = new FreeTile(tiles_cp[i].Position);
                     UpdatedTiles.Add(tiles[i]);
@@ -132,10 +160,11 @@ namespace Life_Simulation
             for (int i = 0; i < tiles_cp.Length; i++)
             {
                 tiles_cp[i].NextTurn(this);
+
                 if (tiles_cp[i].GetType() == typeof(SeedTile)) { life_counter++; }
             }
 
-            if (life_counter == 0)
+            if (life_counter <= 0)
             {
                 is_there_any_life = false;
             }
@@ -146,8 +175,10 @@ namespace Life_Simulation
             canvas.gen = generation;
             canvas.turn = turn;
             canvas.max_turn = max_turn;
+            canvas.co2 = CarbonDioxideLivel;
+            canvas.o2 = OxigenLevel;
             
-            canvas.DrawAllTiles(UpdatedTiles);
+            canvas.DrawAllTiles(UpdatedTiles, OutputMode);
 
             UpdatedTiles = new List<Tile>();
         }
@@ -162,6 +193,7 @@ namespace Life_Simulation
         private void FillMap()
         {
             Console.Clear();
+
             for (int x = 0, y = 0; ; x++)
             {
                 if ( x == field_size.X )
@@ -171,16 +203,20 @@ namespace Life_Simulation
                 }
 
                 if (y == field_size.Y) { break; }
+                
+                tiles[GetTileIndFromPosition(new Vector2(x, y))] = new FreeTile(x, y);
 
-                tiles[GetTileIndFromPosition(new Vector2(x, y))] = new FreeTile(x, y);   
+                // NewWall();
+
                 UpdatedTiles.Add(tiles[GetTileIndFromPosition(new Vector2(x, y))]);
-            }
+            }            
+
             FillLife();
         }
 
         private void FillLife()
         {
-            for (byte x = spaceBetweenTiles, y = spaceBetweenTiles; ; x += spaceBetweenTiles)
+            for (byte x = 0, y = 0; ; x += spaceBetweenTiles)
             {
                 if (x >= field_size.X)
                 {
@@ -188,7 +224,30 @@ namespace Life_Simulation
                     x = spaceBetweenTiles;
                     if (y >= field_size.Y) { break; }
                 }
+                if (x == 95) { continue; }
                 NewTile(new Vector2 (x, y), new SeedTile (new Vector2(x,y)));
+
+                if (x < 95) { tiles[GetTileIndFromPosition(new Vector2 (x, y))].ClanColor = ConsoleColor.Red; }
+
+                else { tiles[GetTileIndFromPosition(new Vector2 (x, y))].ClanColor = ConsoleColor.Blue; }
+            }
+        }
+
+        public void BreakWall()
+        {
+            for (int i = 0; i < tiles.Length; i++)
+            {
+                if (tiles[i].GetType() == typeof(WallTile))
+                {
+                    tiles[i] = new FreeTile (tiles[i].Position);
+                }
+            }
+        }
+        public void NewWall()
+        {
+            for  (int i = 0; i < field_size.Y; i++)
+            {
+                tiles[GetTileIndFromPosition(new Vector2 (95, i))] = new WallTile (new Vector2 (95, i));
             }
         }
 
@@ -205,6 +264,22 @@ namespace Life_Simulation
             UpdatedTiles.Add(tile);
         }
 
+        public bool TryDeleteTile(Vector2 position)
+        {
+            if (IsTileInField(position) && tiles[GetTileIndFromPosition(position)].GetType() != typeof(WallTile))
+            {
+                tiles[GetTileIndFromPosition(position)].Die();
+
+                tiles[GetTileIndFromPosition(position)] = new FreeTile (position);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public void TryAddTile(Vector2 position, Tile tile)
         {
             if (IsTileFree(position) && IsTileInField(position))
@@ -213,7 +288,7 @@ namespace Life_Simulation
             }
             else
             {
-                if (IsTileInField(position) && tile.GetType() == typeof(KillerTile) && tiles[GetTileIndFromPosition(position)].GetType() != typeof(RootTile))
+                if (IsTileInField(position) && tile.GetType() == typeof(KillerTile) && tiles[GetTileIndFromPosition(position)].GetType() != typeof(WallTile))
                 {
                     tiles[GetTileIndFromPosition(position)].Die();
 
@@ -233,6 +308,7 @@ namespace Life_Simulation
         {
             if (!IsTileInField(position)) {return;}
             if (tiles[GetTileIndFromPosition(position)].GetType() == typeof(SeedTile)) { return; }
+            if (tiles[GetTileIndFromPosition(position)].GetType() == typeof(WallTile)) { return; }
 
             NewTile(position, tile);
         }
@@ -247,6 +323,23 @@ namespace Life_Simulation
             }
         }
 
+        public float CountEnergy(Tile tile)
+        {
+            if (tile.GetType() == typeof(LeafTile))
+            {
+                return 3.2f * SunLevel * OverallEnergy;
+            }
+            // else if (tile.GetType() == typeof(ElectroTile))
+            // {
+            //     return (110-tile.Age) * 0.09f * OverallEnergy;
+            // }
+            else if (tile.GetType() == typeof(InvestingTile))
+            {
+                return tile.Age-5 * OverallEnergy;
+            }
+            return 1;
+       }
+
         private int GetTileIndFromPosition(Vector2 position)
         {
             return position.Y * field_size.X + position.X;
@@ -254,7 +347,7 @@ namespace Life_Simulation
 
         private bool IsTileInField(Vector2 position)
         {
-            return position.X > 0 && position.X < field_size.X && position.Y > 0 && position.Y < field_size.Y;
+            return position.X >= 0 && position.X < field_size.X && position.Y >= 0 && position.Y < field_size.Y;
         }
 
         public Tile GetTile(Vector2 position)

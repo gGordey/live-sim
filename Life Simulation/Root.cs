@@ -18,9 +18,11 @@ namespace Life_Simulation
 
         private float _start_energy = 0;
 
-        private float _maxEnergy = 35;
+        private float _maxEnergy = 65;
 
-        private float _energyConsuming = 1;
+        private float _energyConsuming = 0;
+
+        private float _minerals = 0;
 
         public bool IsAlive = true;
 
@@ -48,6 +50,10 @@ namespace Life_Simulation
         public float EnergyConsuming {get { return _energyConsuming; } set { _energyConsuming = value; }} 
 
         public float StarterEnergy { set { _start_energy = value; } get {return _start_energy;}}
+
+        public float Minerals { set { _minerals = value; } get {return _minerals;}} // if (value > MineralsLimit) {Die();}
+
+        public float MineralsLimit {get { return tiles.Count + 15; }} 
 
         public void Die()
         {   

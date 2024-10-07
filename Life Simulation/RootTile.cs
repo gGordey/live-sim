@@ -10,9 +10,9 @@ namespace Life_Simulation
     class RootTile : Tile
     {
 
-        private byte[] gen = new byte[4];
+        private byte[][] gen = new byte[2][];
 
-        private byte[] second_gen = new byte[4];
+        private byte[][] second_gen = new byte[2][];
 
         private int life_length = 120;
 
@@ -21,7 +21,7 @@ namespace Life_Simulation
             Construct('*', ConsoleColor.DarkYellow, 0.2f, 0, root, life_length);
         }
 
-        public RootTile(Root root, Vector2 pos, byte[] gen, byte[] second_gen)
+        public RootTile(Root root, Vector2 pos, byte[][] gen, byte[][] second_gen)
         {
             this.gen = gen;
             this.second_gen = second_gen;
@@ -32,32 +32,22 @@ namespace Life_Simulation
 
         private Vector2[] directions = { new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 0) };
 
-        /*
-         * 
-         * GEN:
-         * 0 - root
-         * 1 - leaf
-         * 2 - saving tile
-         */
-
         private byte currentStep = 0;
 
         public override void NextTurn(Game game)
         {
-            base.NextTurn(game);
-
-            for (byte i = 0; i < 4; i++)
+            for (int i = 0; i < root.seed.LifeSpeedCount(); i++)
             {
-                if (game.IsTileFree(Position+directions[i]))
-                {
-                    currentStep = i;
-                    break;
-                }
-            }
+                base.NextTurn(game);
 
-            if (currentStep <= 3)
-            {
                 Grow();
+
+                currentStep++;
+
+                if (currentStep > 3)
+                {
+                    currentStep = 0;
+                }
             }
         }
         private void Grow()
@@ -75,7 +65,7 @@ namespace Life_Simulation
         private Tile ReadGen(int ind) 
         {
 
-            switch (gen[ind])
+            switch (gen[root.seed.root_gen_pair][ind])
             { 
                 case 0: return new RootTile(root, Position + directions[ind], second_gen, gen);
 
@@ -85,11 +75,11 @@ namespace Life_Simulation
 
                 case 3: return new FlowerTile(root);
 
-                case 4: return new ElectroTile(root);
+                case 4: return new MineralTile(root);
 
                 case 5: return new KillerTile(root);
 
-                case 6: return new InvestingTile (root);
+                case 6: return new LeafTile(root);// return new InvestingTile (root);
 
                 default: return new FreeTile(Position);
             }

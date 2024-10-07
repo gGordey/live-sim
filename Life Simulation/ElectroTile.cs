@@ -2,16 +2,22 @@ using System;
 
 namespace Life_Simulation
 {
-    class ElectroTile : ProdusingTile
+    class MineralTile : ProdusingTile
     {
-        public ElectroTile (Root root)
+        public MineralTile (Root root)
         {
             Construct('$', ConsoleColor.DarkBlue, 7, 1.5f, root, 104);
         }
 
         public override void ProduseEnergy()
         {
-            root.Energy += (120-Age) * 0.1f;
+            root.Minerals += 2f;
+            if (root.Minerals > 5f)
+            {
+                int min_take = new Random ().Next(2);
+                root.Minerals -= min_take;
+                root.Energy += min_take * game.OverallEnergy * Game.EnergyPerMineral;
+            }
         }
     }
 }

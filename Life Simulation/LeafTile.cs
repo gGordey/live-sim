@@ -8,7 +8,6 @@ namespace Life_Simulation
 {
     class LeafTile : ProdusingTile
     {
-        private float naberhood = 1f;
         public LeafTile(Root root, Vector2 positon)
         {
             Construct('@', ConsoleColor.Green, 4, 0.1f, root, 30);
@@ -27,16 +26,13 @@ namespace Life_Simulation
 
         public override void ProduseEnergy()
         {
-            root.Energy += EnergyProdusing * game.SunLevel * naberhood;
-
-            if (Age % 3 == 0)
-            {
-                naberhood = 1f;
-                for (int i = 0; i < 4; i++)
-                {
-                    if (game.GetTile(Position+root.seed.GetPositionFromInd((byte)i)).GetType() == typeof(LeafTile)) {naberhood = 0.4f;}
-                }
-            }
+            //if (game.CarbonDioxideLivel <= 0) {return;}
+            root.Energy += game.CountEnergy(this);
+            // if (Age % 3 == 0)
+            // {
+            //     game.OxigenLevel += 0.002f;
+            //     game.CarbonDioxideLivel -= 0.0002f;
+            // }
         }
     }
 }
