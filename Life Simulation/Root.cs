@@ -18,7 +18,7 @@ namespace Life_Simulation
 
         private float _start_energy = 0;
 
-        private float _maxEnergy = 65;
+        private float _maxEnergy = 85;
 
         private float _energyConsuming = 0;
 

@@ -81,6 +81,8 @@ namespace Life_Simulation
 
                 case 6: return new LeafTile(root);// return new InvestingTile (root);
 
+                case 7: return new OrganicTile(root);
+
                 default: return new FreeTile(Position);
             }
         }

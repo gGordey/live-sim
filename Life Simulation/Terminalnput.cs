@@ -61,7 +61,7 @@ namespace Life_Simulation
                     return true;
                 
                 case "output mode":
-                    Console.Write("What mode chose? (default, clan, gen): ");
+                    Console.Write("What mode chose? (default, clan, gen, org): ");
 
                     string new_mode = Console.ReadLine();
 
@@ -71,10 +71,16 @@ namespace Life_Simulation
 
                     if (new_mode  == "gen") { game.OutputMode = Game.DrawMode.FirstGen; }
 
+                    if (new_mode  == "org") { game.OutputMode = Game.DrawMode.Organic; }
+
                     Console.Clear();
                     
                     return true;
+                
+                case "mark clans":
+                    game.MarkClans();
                     
+                    return true;
                 
                 default:
                     return true;

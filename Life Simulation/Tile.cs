@@ -92,6 +92,12 @@ namespace Life_Simulation
             if (root == null) { return; }
 
             root.EnergyConsuming -= _energy_consuming;
+
+            if (game == null) { return; }
+
+            //if (new Random().Next(100) < 2) { game.ReplaceTile(Position, new DeathTile(Position)); }
+
+            game.SpreadOrganic(0.07f, Position);
         }
 
         private void energy_construct()

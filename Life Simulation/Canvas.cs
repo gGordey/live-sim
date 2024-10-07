@@ -1,4 +1,6 @@
 ﻿
+using System.Reflection.Emit;
+
 namespace Life_Simulation
 {
     class Canvas
@@ -15,12 +17,13 @@ namespace Life_Simulation
         public int turn;
         public int max_turn;
         public float o2, co2;
+        public static float[] org = new float[Game.field_size.X*Game.field_size.Y];
         private static void DrawTile(Tile tile, Game.DrawMode mode)
         {
             // if (tile == null) return;
 
             int pos = 0;
-            if (tile.Position.X != 0) { pos = tile.Position.X*2-1;}
+            if (tile.Position.X != 0) { pos = tile.Position.X*2-1;} // *2-1
 
             Console.SetCursorPosition(pos, tile.Position.Y);
             
@@ -38,10 +41,30 @@ namespace Life_Simulation
         public void DrawAllTiles (List<Tile> tiles, Game.DrawMode mode)
         {
             //Console.Clear();
-
-            foreach (Tile tile in tiles)
+            if (mode != Game.DrawMode.Organic)
+            { 
+                foreach (Tile tile in tiles)
+                {
+                    DrawTile(tile, mode);
+                }
+            }
+            else
             {
-                DrawTile(tile, mode);
+                for (int i = 0; i < org.Length; i++)
+                {   
+                    float val = org[i];
+                    if (val < 0.4f) { Console.ForegroundColor = ConsoleColor.White; }
+                    else if (val < 0.9f) { Console.ForegroundColor = ConsoleColor.Gray; }
+                    else if (val < 1.4f) { Console.ForegroundColor = ConsoleColor.DarkGray; }
+                    else if (val < 1.5f) { Console.ForegroundColor = ConsoleColor.Black; }
+                    else { Console.ForegroundColor = ConsoleColor.Red; }
+
+                    int y = i / Game.field_size.X;
+                    int x = i - y * Game.field_size.X;
+
+                    Console.SetCursorPosition(x*2, y);
+                    Console.Write("██");
+                }
             }
             // for (int i = 0; i < _field_width; i++)
             // {

@@ -128,6 +128,8 @@ namespace Life_Simulation
 
                     base.NextTurn(game);
 
+                    Age++;
+
                     root.NewTurn();
                     
                     ReadGen();
@@ -246,11 +248,11 @@ namespace Life_Simulation
             {
                 if (root_base_gen == null || r.Next(100) < mutatability) 
                 {
-                    root_gen[0][i] = (byte)r.Next(7);
-                    root_sec_gen[0][i] = (byte)r.Next(7);
+                    root_gen[0][i] = (byte)r.Next(8);
+                    root_sec_gen[0][i] = (byte)r.Next(8);
 
-                    root_gen[1][i] = (byte)r.Next(7);
-                    root_sec_gen[1][i] = (byte)r.Next(7);
+                    root_gen[1][i] = (byte)r.Next(8);
+                    root_sec_gen[1][i] = (byte)r.Next(8);
                 }
             }
         }
@@ -398,7 +400,7 @@ namespace Life_Simulation
             }
             else if (currentStep == 1)
             {
-                GrowTile(gen[currentGen][1]%7, (byte)(gen[currentGen][2]%4));
+                GrowTile(gen[currentGen][1]%8, (byte)(gen[currentGen][2]%4));
             }
             else if (currentStep <= 6)
             {
@@ -458,6 +460,8 @@ namespace Life_Simulation
                 case 5:
                     return new LeafTile (root, Position);
                     //return new InvestingTile (root);
+                
+                case 6: return new OrganicTile(root);
                 
                 default:
                     return new FreeTile (Position);

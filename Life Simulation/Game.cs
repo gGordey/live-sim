@@ -19,11 +19,15 @@ namespace Life_Simulation
 
         public static float EnergyPerMineral = 3f;
 
-        private static Vector2 field_size = new Vector2 (190, 100);
+        public static float LimitOrganic = 2.5f;
+
+        public static Vector2 field_size = new Vector2 (190, 100);
 
         private static byte spaceBetweenTiles = 5;
 
         private Tile[] tiles = new Tile[field_size.X * field_size.Y];
+
+        public float[] Organic = new float[field_size.X * field_size.Y];
 
         private List<Tile> UpdatedTiles = new List<Tile> ();
 
@@ -31,7 +35,8 @@ namespace Life_Simulation
         {
             Default,
             Clan,
-            FirstGen
+            FirstGen,
+            Organic,
         }
 
         public DrawMode OutputMode = DrawMode.Default;
@@ -177,6 +182,11 @@ namespace Life_Simulation
             canvas.max_turn = max_turn;
             canvas.co2 = CarbonDioxideLivel;
             canvas.o2 = OxigenLevel;
+
+            if (OutputMode == DrawMode.Organic)
+            {
+                Canvas.org = Organic;
+            }
             
             canvas.DrawAllTiles(UpdatedTiles, OutputMode);
 
@@ -212,6 +222,8 @@ namespace Life_Simulation
             }            
 
             FillLife();
+
+            RefillOrganic();
         }
 
         private void FillLife()
@@ -224,12 +236,17 @@ namespace Life_Simulation
                     x = spaceBetweenTiles;
                     if (y >= field_size.Y) { break; }
                 }
-                if (x == 95) { continue; }
                 NewTile(new Vector2 (x, y), new SeedTile (new Vector2(x,y)));
 
-                if (x < 95) { tiles[GetTileIndFromPosition(new Vector2 (x, y))].ClanColor = ConsoleColor.Red; }
+                MarkClans();
+            }
+        }
 
-                else { tiles[GetTileIndFromPosition(new Vector2 (x, y))].ClanColor = ConsoleColor.Blue; }
+        private void RefillOrganic()
+        {
+            for (int i = 0; i < Organic.Length; i++)
+            {
+                Organic[i] = 1f;
             }
         }
 
@@ -248,6 +265,20 @@ namespace Life_Simulation
             for  (int i = 0; i < field_size.Y; i++)
             {
                 tiles[GetTileIndFromPosition(new Vector2 (95, i))] = new WallTile (new Vector2 (95, i));
+            }
+        }
+        public void MarkClans()
+        {
+            foreach(Tile tile in tiles)
+            {
+                if (tile.Position.X < 95)
+                {
+                    tile.ClanColor = ConsoleColor.DarkRed;
+                }
+                else
+                {
+                    tile.ClanColor = ConsoleColor.Blue;
+                }
             }
         }
 
@@ -282,7 +313,7 @@ namespace Life_Simulation
 
         public void TryAddTile(Vector2 position, Tile tile)
         {
-            if (IsTileFree(position) && IsTileInField(position))
+            if (IsTileFree(position) && IsTileInField(position) && Organic[GetTileIndFromPosition(position)] < Game.LimitOrganic)
             {
                 NewTile(position, tile);
             }
@@ -327,7 +358,9 @@ namespace Life_Simulation
         {
             if (tile.GetType() == typeof(LeafTile))
             {
-                return 3.2f * SunLevel * OverallEnergy;
+                float mult = Organic[GetTileIndFromPosition(tile.Position)];
+                if (mult < 0.9f) { mult = 0.9f; }
+                return 3.2f * SunLevel * OverallEnergy * mult;
             }
             // else if (tile.GetType() == typeof(ElectroTile))
             // {
@@ -340,12 +373,34 @@ namespace Life_Simulation
             return 1;
        }
 
-        private int GetTileIndFromPosition(Vector2 position)
+       public void SpreadOrganic(float organic, Vector2 Position)
+       {
+            for (int i = 0; i < 5; i++)
+            {
+                int x = new Random().Next(2)-1, y = new Random().Next(2)-1;
+
+                if(!IsTileInField(Position + new Vector2(x, y))) { continue; }
+
+                Organic[GetTileIndFromPosition(Position + new Vector2(x, y))] += organic/5;
+                
+                if (Organic[GetTileIndFromPosition(Position + new Vector2(x, y))] >= Game.LimitOrganic)
+                {
+                    Organic[GetTileIndFromPosition(Position + new Vector2(x, y))] = Game.LimitOrganic;
+
+                    if (tiles[GetTileIndFromPosition(Position + new Vector2(x, y))].GetType() != typeof(OrganicTile))
+                    {
+                        ReplaceTile(Position + new Vector2(x, y), new DeathTile(Position + new Vector2(x, y)));
+                    }
+                }
+            }
+       }
+
+        public int GetTileIndFromPosition(Vector2 position)
         {
             return position.Y * field_size.X + position.X;
         }
 
-        private bool IsTileInField(Vector2 position)
+        public bool IsTileInField(Vector2 position)
         {
             return position.X >= 0 && position.X < field_size.X && position.Y >= 0 && position.Y < field_size.Y;
         }
