@@ -51,8 +51,7 @@ namespace Life_Simulation
 
         public float StarterEnergy { set { _start_energy = value; } get {return _start_energy;}}
 
-        public float Minerals { set { _minerals = value; } get {return _minerals;}} // if (value > MineralsLimit) {Die();}
-
+        public float Minerals { set { _minerals = value; if (value > MineralsLimit) {Die();} } get {return _minerals;}} 
         public float MineralsLimit {get { return tiles.Count + 15; }} 
 
         public void Die()
@@ -75,6 +74,7 @@ namespace Life_Simulation
 
         public void NewTurn()
         {
+            if (seed.is_sleeping) { return; }
             Energy -= EnergyConsuming;
             if (_start_energy > 0 && Energy < EnergyLimit) 
             {

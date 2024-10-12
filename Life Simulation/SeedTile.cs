@@ -17,7 +17,7 @@ namespace Life_Simulation
         {
             Position = position;
 
-            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 240);
+            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 360);
 
             root.seed = this;
 
@@ -30,13 +30,15 @@ namespace Life_Simulation
 
             flying_dist = 10;
             left_fly = 10;
+
+            LifeSpeed = 0;
         }
 
         public SeedTile(Vector2 position, Root previous_root)
         {
             Position = position;
 
-            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 240);
+            Construct('&', ConsoleColor.Cyan, 0, 3, new Root(), 360);
 
             root.seed = this;
 
@@ -70,17 +72,22 @@ namespace Life_Simulation
             ClanColor = previous_root.seed.ClanColor;
             GenColor = previous_root.seed.GenColor;
 
-            LifeSpeed = previous_root.seed.LifeSpeed + (float)(new Random().NextDouble()*0.1-0.05);
+            LifeSpeed = previous_root.seed.LifeSpeed;
+
+            if (new Random().Next(100) < 20)
+            {
+                LifeSpeed += new Random().Next(2)-1;
+            }
         }
 
-        public float LifeSpeed = 1f;
+        public int LifeSpeed;
 
         private bool is_flying = false;
         private Vector2 flying_dir;
         public int flying_dist;
         private int left_fly;
 
-        private bool is_sleeping = false;
+        public bool is_sleeping = false;
         private byte sleep_for = 0;
 
         private bool is_rebirth = false;
@@ -128,6 +135,8 @@ namespace Life_Simulation
 
                     base.NextTurn(game);
 
+                    if (Position.X < 120) { game.Organic[game.GetTileIndFromPosition(Position)] += 0.004f; }
+
                     Age++;
 
                     root.NewTurn();
@@ -172,7 +181,7 @@ namespace Life_Simulation
         private void Fly()
         {
             if (left_fly > 0 && game.IsTileFree(Position + flying_dir)) { game.MoveTile(this, new FreeTile(Position), Position+flying_dir); left_fly--; }
-            else {is_flying = false; }
+            else {is_flying = false; game.TryDeleteTile(Position+flying_dir); }
         }
 
         private bool Sleep()
@@ -248,17 +257,18 @@ namespace Life_Simulation
             {
                 if (root_base_gen == null || r.Next(100) < mutatability) 
                 {
-                    root_gen[0][i] = (byte)r.Next(8);
-                    root_sec_gen[0][i] = (byte)r.Next(8);
+                    root_gen[0][i] = (byte)r.Next(255);
+                    root_sec_gen[0][i] = (byte)r.Next(255);
 
-                    root_gen[1][i] = (byte)r.Next(8);
-                    root_sec_gen[1][i] = (byte)r.Next(8);
+                    root_gen[1][i] = (byte)r.Next(255);
+                    root_sec_gen[1][i] = (byte)r.Next(255);
                 }
             }
         }
 
         private void Move(byte dir)
         {
+            dir %= 4;
             Vector2 move = new Vector2();
             
             move = GetPositionFromInd(dir);
@@ -268,6 +278,7 @@ namespace Life_Simulation
 
         private void GrowTile(int tile, byte priority)
         {
+            priority %= 4;
             Tile new_tile = GetTlileFromInd((byte)tile);
 
             if (root.Energy < new_tile.min_energy_level*1.5f) {return;}
@@ -358,7 +369,7 @@ namespace Life_Simulation
                 if (game.TryDeleteTile(GetPositionFromInd((byte)(param%4))))
                 {
                     root.Energy += tile_buffer.min_energy_level;
-                    Move((byte)(param%4));
+                    Move(param);
                 }
             }
             else if (task == 7)
@@ -367,11 +378,11 @@ namespace Life_Simulation
             }
             else if (task == 8)
             {
-                GrowTile(param%7, (byte)(param%4));
+                GrowTile(param, param);
             }
             else if (task == 9)
             {
-                Move((byte)(param%4));
+                Move(param);
             }
             else if (task == 10)
             {
@@ -396,11 +407,11 @@ namespace Life_Simulation
         {
             if (currentStep == 0)
             {
-                Move((byte)(gen[currentGen][0]%4));
+                Move(gen[currentGen][0]);
             }
             else if (currentStep == 1)
             {
-                GrowTile(gen[currentGen][1]%8, (byte)(gen[currentGen][2]%4));
+                GrowTile(gen[currentGen][1], gen[currentGen][2]);
             }
             else if (currentStep <= 6)
             {
@@ -418,7 +429,7 @@ namespace Life_Simulation
             }
         }
 
-        public Vector2 GetPositionFromInd(byte ind)
+        public static Vector2 GetPositionFromInd(byte ind)
         {
             switch (ind)
             {
@@ -440,7 +451,7 @@ namespace Life_Simulation
         }
         public Tile GetTlileFromInd(byte ind)
         {
-            switch (ind)
+            switch (ind%5)
             {
                 case 0:
                     return new LeafTile (root, Position);
@@ -454,14 +465,14 @@ namespace Life_Simulation
                 case 3:
                     return new MineralTile (root);
 
-                case 4:
-                    return new KillerTile (root);
+                // case 4:
+                //     return new KillerTile (root);
 
-                case 5:
-                    return new LeafTile (root, Position);
+                // case 5:
+                //     return new LeafTile (root, Position);
                     //return new InvestingTile (root);
                 
-                case 6: return new OrganicTile(root);
+                case 4: return new OrganicTile(root);
                 
                 default:
                     return new FreeTile (Position);
@@ -471,40 +482,25 @@ namespace Life_Simulation
         private float turn_counter = 0;
         public int LifeSpeedCount()
         {
-            if (LifeSpeed >= 1)
+            if (LifeSpeed < 0)
             {
-                if (turn_counter >= 1)
-                {
-                    return (int)LifeSpeed + 1;
-                }
-                else
-                {
-                    return (int)LifeSpeed;
-                }
-                
+                return -LifeSpeed;
             }
-            else // LifeSpeed < 1
+            if (turn_counter == LifeSpeed)
             {
-                if (turn_counter < 1) { return 0; }
-                else { return 1; }
+                return 1;
+            }
+            else
+            {
+                return 0;
             }
         }
         public void LifeSpeedProcess()
         {
-            if (turn_counter >= 1) { turn_counter = 0; }
-
-            if (turn_counter <= 0)
+            turn_counter++;
+            if (turn_counter > LifeSpeed)
             {
-                turn_counter = LifeSpeed;
-            }
-
-            if (LifeSpeed < 1)
-            {
-                turn_counter += LifeSpeed;
-            }
-            if (LifeSpeed > 1)
-            {
-                turn_counter += LifeSpeed-(int)Math.Floor(LifeSpeed);
+                turn_counter = 0;
             }
         }
     }

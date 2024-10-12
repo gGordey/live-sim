@@ -50,13 +50,14 @@ namespace Life_Simulation
             }
             else
             {
+                float org_step = Game.LimitOrganic / 4;
                 for (int i = 0; i < org.Length; i++)
                 {   
                     float val = org[i];
-                    if (val < 0.4f) { Console.ForegroundColor = ConsoleColor.White; }
-                    else if (val < 0.9f) { Console.ForegroundColor = ConsoleColor.Gray; }
-                    else if (val < 1.4f) { Console.ForegroundColor = ConsoleColor.DarkGray; }
-                    else if (val < 1.5f) { Console.ForegroundColor = ConsoleColor.Black; }
+                    if (val < org_step) { Console.ForegroundColor = ConsoleColor.White; }
+                    else if (val < org_step*2) { Console.ForegroundColor = ConsoleColor.Gray; }
+                    else if (val < org_step*3) { Console.ForegroundColor = ConsoleColor.DarkGray; }
+                    else if (val < org_step*4) { Console.ForegroundColor = ConsoleColor.Black; }
                     else { Console.ForegroundColor = ConsoleColor.Red; }
 
                     int y = i / Game.field_size.X;

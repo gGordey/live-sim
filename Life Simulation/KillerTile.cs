@@ -14,5 +14,11 @@ namespace Life_Simulation
         {
             root.Energy += energy_from_kill;
         }
+        public override void NextTurn(Game game)
+        {
+            base.NextTurn(game);
+
+            Age++;
+        }
     }
 }

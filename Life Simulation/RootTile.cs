@@ -36,6 +36,7 @@ namespace Life_Simulation
 
         public override void NextTurn(Game game)
         {
+            if (root.seed.is_sleeping) { return; }
             for (int i = 0; i < root.seed.LifeSpeedCount(); i++)
             {
                 base.NextTurn(game);
@@ -64,8 +65,7 @@ namespace Life_Simulation
         
         private Tile ReadGen(int ind) 
         {
-
-            switch (gen[root.seed.root_gen_pair][ind])
+            switch (gen[root.seed.root_gen_pair][ind]%6)
             { 
                 case 0: return new RootTile(root, Position + directions[ind], second_gen, gen);
 
@@ -77,11 +77,11 @@ namespace Life_Simulation
 
                 case 4: return new MineralTile(root);
 
-                case 5: return new KillerTile(root);
+                //case 5: return new KillerTile(root);
 
-                case 6: return new LeafTile(root);// return new InvestingTile (root);
+                //case 6: return new LeafTile(root);// return new InvestingTile (root);
 
-                case 7: return new OrganicTile(root);
+                case 5: return new OrganicTile(root);
 
                 default: return new FreeTile(Position);
             }

@@ -19,7 +19,7 @@ namespace Life_Simulation
 
         public static float EnergyPerMineral = 3f;
 
-        public static float LimitOrganic = 2.5f;
+        public static float LimitOrganic = 5f;
 
         public static Vector2 field_size = new Vector2 (190, 100);
 
@@ -153,6 +153,8 @@ namespace Life_Simulation
 
             for (int i = 0; i < tiles_cp.Length; i++)
             {
+                if (Organic[i] >= LimitOrganic) { ReplaceTile(tiles[i].Position, new DeathTile(tiles[i].Position)); }
+                
                 if (!tiles_cp[i].IsAlive)//((tiles_cp[i].root != null && !tiles_cp[i].root.IsAlive) || IsTileFree(tiles_cp[i].Position))
                 {
                     tiles[i] = new FreeTile(tiles_cp[i].Position);
@@ -246,7 +248,7 @@ namespace Life_Simulation
         {
             for (int i = 0; i < Organic.Length; i++)
             {
-                Organic[i] = 1f;
+                Organic[i] = 3f;
             }
         }
 
@@ -359,7 +361,7 @@ namespace Life_Simulation
             if (tile.GetType() == typeof(LeafTile))
             {
                 float mult = Organic[GetTileIndFromPosition(tile.Position)];
-                if (mult < 0.9f) { mult = 0.9f; }
+                if (mult > 2.5f) { mult = 2.5f; }
                 return 3.2f * SunLevel * OverallEnergy * mult;
             }
             // else if (tile.GetType() == typeof(ElectroTile))
@@ -375,6 +377,7 @@ namespace Life_Simulation
 
        public void SpreadOrganic(float organic, Vector2 Position)
        {
+            if (Position.X >= 120) { return; }
             for (int i = 0; i < 5; i++)
             {
                 int x = new Random().Next(2)-1, y = new Random().Next(2)-1;
@@ -386,11 +389,6 @@ namespace Life_Simulation
                 if (Organic[GetTileIndFromPosition(Position + new Vector2(x, y))] >= Game.LimitOrganic)
                 {
                     Organic[GetTileIndFromPosition(Position + new Vector2(x, y))] = Game.LimitOrganic;
-
-                    if (tiles[GetTileIndFromPosition(Position + new Vector2(x, y))].GetType() != typeof(OrganicTile))
-                    {
-                        ReplaceTile(Position + new Vector2(x, y), new DeathTile(Position + new Vector2(x, y)));
-                    }
                 }
             }
        }

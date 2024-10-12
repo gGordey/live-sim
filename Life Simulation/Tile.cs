@@ -78,7 +78,7 @@ namespace Life_Simulation
         {
             if (_life_length <= 1) { return; }
 
-            Age++;
+            //Age++;
 
             if (Age >= _life_length) {Die();}
 
@@ -97,7 +97,7 @@ namespace Life_Simulation
 
             //if (new Random().Next(100) < 2) { game.ReplaceTile(Position, new DeathTile(Position)); }
 
-            game.SpreadOrganic(0.07f, Position);
+            game.SpreadOrganic(new Random().Next(4)/10.5f, Position);
         }
 
         private void energy_construct()
