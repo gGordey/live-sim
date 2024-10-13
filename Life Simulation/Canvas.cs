@@ -23,7 +23,7 @@ namespace Life_Simulation
             // if (tile == null) return;
 
             int pos = 0;
-            if (tile.Position.X != 0) { pos = tile.Position.X*2-1;} // *2-1
+            if (tile.Position.X != 0) { pos = tile.Position.X*2; } // *2-1
 
             Console.SetCursorPosition(pos, tile.Position.Y);
             

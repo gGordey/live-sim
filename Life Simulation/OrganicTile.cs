@@ -10,15 +10,15 @@ namespace Life_Simulation
             Construct('Q', ConsoleColor.DarkRed, 4f, 1.3f, root, 80);
         }
 
-        private float organic_taking = 0.04f;
-        private int range = 1;
-        private bool is_using_range = false;
+        private float organic_taking = 0.002f;
+        private int range = 2;
+        private bool is_using_range = true;
 
         public override void ProduseEnergy()
         {
             base.ProduseEnergy();
 
-            if (Position.X >= 120) { return; }
+            // if (Position.X >= 120) { return; }
 
             //root.Energy += game.CountEnergy(this);
 

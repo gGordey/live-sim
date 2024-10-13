@@ -135,7 +135,9 @@ namespace Life_Simulation
 
                     base.NextTurn(game);
 
-                    if (Position.X < 120) { game.Organic[game.GetTileIndFromPosition(Position)] += 0.004f; }
+                    // if (Position.X < 120) { game.Organic[game.GetTileIndFromPosition(Position)] += 0.004f; }
+                    
+                    game.Organic[game.GetTileIndFromPosition(Position)] += 0.004f;
 
                     Age++;
 
@@ -336,13 +338,14 @@ namespace Life_Simulation
 
         private void Command(byte task, byte param)
         {
-            task %= 13; // tasks count ++
+            task %= 14; // tasks count ++
 
             if (task == 0) { Move((byte)new Random().Next(4)); }
 
             else if (task == 1 && !is_rebirth) 
             { 
-                root.Die(); Age /= 2;  
+                root.Die(); 
+                Age = 0;  
                 float enrg = root.Energy + root.StarterEnergy / 1.5f;
                 root = new Root();
                 root.seed = this;
@@ -399,7 +402,24 @@ namespace Life_Simulation
                 if (game.OxigenLevel <= 0) {return;}
                 game.OxigenLevel -= 0.03f;
                 game.CarbonDioxideLivel += 0.03f;
-                root.Energy += 5;
+                root.Energy += 1.3f;
+            }
+            else if (task == 13)
+            {
+                float organic_taking = 0.5f;
+                for (byte i = 0; i < 4; i++)
+                {
+                    if (game.IsTileInField(Position + SeedTile.GetPositionFromInd(i)) && game.Organic[game.GetTileIndFromPosition(Position + SeedTile.GetPositionFromInd(i))] > 0)
+                    {
+                        root.Energy += organic_taking * 4.5f * game.OverallEnergy;
+                        game.Organic[game.GetTileIndFromPosition(Position + SeedTile.GetPositionFromInd(i))] -= organic_taking;
+                    }
+                    if (game.GetTile(Position+SeedTile.GetPositionFromInd(i)).GetType() == typeof(DeathTile))
+                    {
+                        game.ReplaceTile(Position+SeedTile.GetPositionFromInd(i), new FreeTile(Position + SeedTile.GetPositionFromInd(i)));
+                        root.Energy += DeathTile.EnergySaving;
+                    }
+                }
             }
         }
 

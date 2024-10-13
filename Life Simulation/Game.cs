@@ -69,7 +69,7 @@ namespace Life_Simulation
             breakpoin_turn = 0;
             is_simulated = false;
 
-            draw_time = 200;
+            draw_time = 1;
             not_drawing_turn = 1;
 
             is_there_any_life = false;
@@ -377,7 +377,7 @@ namespace Life_Simulation
 
        public void SpreadOrganic(float organic, Vector2 Position)
        {
-            if (Position.X >= 120) { return; }
+            // if (Position.X >= 120) { return; }
             for (int i = 0; i < 5; i++)
             {
                 int x = new Random().Next(2)-1, y = new Random().Next(2)-1;
